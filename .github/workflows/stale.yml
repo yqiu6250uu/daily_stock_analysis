@@ -16,6 +16,7 @@ permissions:
 
 jobs:
   stale:
+    if: github.repository == 'ZhuLinsen/daily_stock_analysis'
     name: 🧹 清理过期 Issues/PRs
     runs-on: ubuntu-latest
     

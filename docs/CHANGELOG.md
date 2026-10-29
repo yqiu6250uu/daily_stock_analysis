@@ -9,6 +9,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+- [文档] 将仓库首页改为 EquityLens 作品集入口，新增真实应用截图、功能状态、局限、案例研究与发布审核清单，明确原项目 MIT 署名和未实现能力。
+- [chore] 为继承的定时分析、网络 smoke 与过期 Issue 工作流加入仅上游仓库运行的 job guard；本地准备，不启用 Fork 工作流。
+
+- [改进] EquityLens Step C 区分界面语言与历史报告原文语言；英语模式对旧中文报告显示明确提示和主动展开入口，新分析与问股请求显式携带所选语言。
+- [修复] 市场复盘新模板根标题去除装饰 Emoji，告警触发历史、问股与设置主要控件本地化；公司研究来源区序号及可键盘聚焦的历史财务表修正。
+- [测试] 新增历史原文披露、英文控件与 Agent 请求语言回归，记录全站语言覆盖缺口；`/screening`、`/portfolio` 和旧通知模板尚待 Step C 收尾，不作为已发布双语能力。
+
+- [新功能] EquityLens Phase 1A.5 Step B 在实际 React 公司研究页加入暖白/深蓝双主题阅读层、年度/季度财务趋势、收入与经营现金流事实比较及就近 SEC 证据；仅复用现有 SEC API 和已验证指标，不声称 AI 解释或现金流增长率。
+- [修复] Market Tools 深链接/刷新自动展开当前工具，保留会话内人工展开状态；九条旧工具路由保持可访问。研究首页提供真实的收入与现金流比较入口。
+- [测试] 增加可比/不可比事实、工具导航状态与生产页面浏览器回归；Step B 截图保存在仓库外。旧市场报告英文混中文及装饰 Emoji 仍待 Step C。
+
+- [文档] 采纳 EquityLens Product Strategy 2.1，记录实际功能边界、研究优先站点地图、Phase 1A.5 Step B 公司研究实施提案、Revenue & Cash Flow 旗舰研究规格及 $0–5/月静态优先发布门槛；本条不表示 Step B 或研究引擎已实现。
+
+- [新功能] EquityLens Phase 1A.5 Step A 在现有 React 应用实现白色/深海军蓝品牌壳层、研究优先侧栏、双语 Research Home、真实 SEC NVDA 首页预览、键盘可用 ticker 搜索及可展开财务趋势/证据；旧分析首页迁至 `/tools/daily-analysis` 并保留其他深链接。公司页内容重排与旧报告语言治理待后续审阅。
+
+- [新功能] EquityLens Phase 1A 新增 SEC EDGAR 只读适配器、可追溯的年度/季度财务归一化、`/api/v1/financials/company/{ticker}` 与双语公司研究页；无有效 `SEC_CONTACT_EMAIL` 时阻止在线请求并显示配置状态，离线合成夹具不作为真实财报。NVDA 已经有限真实 SEC 对照；生产性资产购置按原始概念披露其宽于纯 PP&E 的口径。
+- [修复] SEC Submissions 补零 CIK 与 CompanyFacts 整数 CIK 可正确匹配；公司研究页的移动证据文本不再造成整页横向溢出，历史图表颜色与当前主题一致，来源口径和计算定义在中英文页面准确展示。
+- [测试] 新增 SEC 映射、重试/缓存、修订与冲突事实、累计季度/Q4 计算、API 契约及研究页双语/缺失状态回归；修正旧 Vitest 原生 title 和过期时间线夹具失败。
+
 - [修复] 自选及其他无关配置保存不再被已有 LLM 渠道或模型错误阻断，模型相关修改仍校验完整依赖；仅更新自选时保留运行时单例与容器环境覆盖，并补齐增删、删空和校验回归。凡本次保存会启用 Agent 路径的，同样校验完整模型依赖：切到 LiteLLM Agent 后端（`AGENT_BACKEND` / `AGENT_GENERATION_BACKEND` 解析为 litellm）、开启 Agent 分析（`AGENT_MODE=true`）、或配置了非 `all` 的 `AGENT_SKILLS`——后两者走普通分析的 Agent 分支，自带 `LLMToolAdapter`，不受 `AGENT_BACKEND` 决定。仅关闭 `AGENT_MODE`、将 `AGENT_SKILLS` 设为 `all` 或空值、以及无关键保存仍不受 LLM 配置影响；显式保存或导入已退役的 `codex_app_server` 仍被拒绝。
 - [改进] 移除实验性 Codex App Server 问股后端及专属探针、取消与启动链；旧配置明确提示退役并可主动修正，保留默认 LiteLLM、会话接受事务及独立 Codex CLI 报告。
 - [修复] Agent 状态面板在缺少可用主模型时显示中英文配置指引，保留技术错误码；配置指南明确区分已移除后端与历史 Gate 记录。
