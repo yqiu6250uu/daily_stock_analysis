@@ -20,6 +20,7 @@ from api.v1.endpoints import (
     backtest,
     data,
     decision_signals,
+    financials,
     health,
     history,
     intelligence,
@@ -109,6 +110,12 @@ router.include_router(
     data.router,
     prefix="/data",
     tags=["Data"]
+)
+
+router.include_router(
+    financials.router,
+    prefix="/financials",
+    tags=["Financials"]
 )
 
 router.include_router(

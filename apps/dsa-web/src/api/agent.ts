@@ -25,6 +25,7 @@ export interface ChatStreamRequest extends ChatRequest {
   session_generation?: string;
   request_id?: string;
   context?: unknown;
+  report_language?: 'zh' | 'en';
 }
 
 

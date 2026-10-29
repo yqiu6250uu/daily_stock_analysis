@@ -888,6 +888,7 @@ describe('SettingsPage', () => {
       notify: false,
       originalQuery: 'SH600000',
       selectionSource: 'manual',
+      reportLanguage: 'zh',
     }));
     expect(await screen.findByText(/task-setup-smoke/)).toBeInTheDocument();
   });
@@ -944,6 +945,7 @@ describe('SettingsPage', () => {
       notify: false,
       originalQuery: 'SH600000',
       selectionSource: 'manual',
+      reportLanguage: 'zh',
     }));
   });
 

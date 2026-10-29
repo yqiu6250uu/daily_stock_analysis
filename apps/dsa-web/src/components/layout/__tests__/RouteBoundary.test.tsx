@@ -53,6 +53,9 @@ describe('RouteOutletBoundary', () => {
       expect(screen.getByRole('button', { name: '重新加载页面' })).toBeInTheDocument();
       expect(screen.getByRole('button', { name: '返回首页' })).toBeInTheDocument();
 
+      if (!screen.queryByRole('link', { name: '持仓' })) {
+        fireEvent.click(screen.getByRole('button', { name: '展开市场工具' }));
+      }
       fireEvent.click(screen.getByRole('link', { name: '持仓' }));
 
       expect(await screen.findByTestId('portfolio-page')).toBeInTheDocument();

@@ -116,8 +116,8 @@ def _get_market_review_text(language: str) -> dict[str, str]:
     normalized = normalize_report_language(language)
     if normalized == "en":
         return {
-            "root_title": "# 🎯 Market Review",
-            "push_title": "🎯 Market Review",
+            "root_title": "# Market Review",
+            "push_title": "Market Review",
             "cn_title": "# A-share Market Recap",
             "us_title": "# US Market Recap",
             "hk_title": "# HK Market Recap",
@@ -127,8 +127,8 @@ def _get_market_review_text(language: str) -> dict[str, str]:
         }
     if normalized == "ko":
         return {
-            "root_title": "# 🎯 시황 리뷰",
-            "push_title": "🎯 시황 리뷰",
+            "root_title": "# 시황 리뷰",
+            "push_title": "시황 리뷰",
             "cn_title": "# 중국 A주 시황 리뷰",
             "us_title": "# 미국 시황 리뷰",
             "hk_title": "# 홍콩 시황 리뷰",
@@ -137,8 +137,8 @@ def _get_market_review_text(language: str) -> dict[str, str]:
             "separator": "> 다음 시장 시황 리뷰",
         }
     return {
-        "root_title": "# 🎯 大盘复盘",
-        "push_title": "🎯 大盘复盘",
+        "root_title": "# 大盘复盘",
+        "push_title": "大盘复盘",
         "cn_title": "# A股大盘复盘",
         "us_title": "# 美股大盘复盘",
         "hk_title": "# 港股大盘复盘",

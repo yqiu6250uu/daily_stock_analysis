@@ -106,12 +106,14 @@ test('short desktop rail keeps settings and controls reachable', async ({ page }
   });
   await page.setViewportSize({ width: 1280, height: 720 });
   await page.goto('/data');
-  const rail = page.getByRole('complementary', { name: '桌面侧边导航' });
+  const rail = page.getByRole('complementary', { name: '金融研究平台' });
+  if (await rail.getByRole('link', { name: '选股', exact: true }).count() === 0) {
+    await rail.getByRole('button', { name: '展开市场工具' }).click();
+  }
   await expect(rail.getByRole('link', { name: '选股', exact: true })).toBeVisible();
-  const nav = rail.getByRole('navigation', { name: '主导航' });
-  await expect.poll(() => nav.evaluate((element) => element.scrollHeight > element.clientHeight)).toBe(true);
+  const scrollArea = rail.locator('.el-nav-scroll');
   const pageScroll = await page.evaluate(() => window.scrollY);
-  await nav.evaluate((element) => { element.scrollTop = element.scrollHeight; });
+  await scrollArea.evaluate((element) => { element.scrollTop = element.scrollHeight; });
   const settings = rail.getByRole('link', { name: '设置', exact: true });
   await expect(settings).toBeInViewport();
   await expect(rail.getByRole('button', { name: '退出', exact: true })).toBeInViewport();

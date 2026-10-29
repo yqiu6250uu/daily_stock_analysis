@@ -263,6 +263,22 @@ def test_build_agent_chat_context_normalizes_default_report_language(
     assert context["report_language"] == expected_language
 
 
+def test_chat_request_explicit_ui_language_overrides_server_default() -> None:
+    request = agent_endpoint.ChatRequest(
+        message="What changed?",
+        report_language="en",
+        context={"stock_code": "NVDA"},
+    )
+
+    context = agent_endpoint._build_agent_chat_context(
+        request,
+        _litellm_config(report_language="zh"),
+        skills=None,
+    )
+
+    assert context == {"stock_code": "NVDA", "report_language": "en"}
+
+
 def test_requested_skill_normalization_reuses_agent_factory_catalog_rules() -> None:
     from src.agent.factory import normalize_requested_skill_ids
 

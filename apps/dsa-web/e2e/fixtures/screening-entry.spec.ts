@@ -22,7 +22,10 @@ for (const state of ['disabled', 'error', 'unavailable'] as const) {
     });
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto('/data');
-    const nav = page.getByRole('complementary', { name: '桌面侧边导航' });
+    const nav = page.getByRole('complementary', { name: '金融研究平台' });
+    if (await nav.getByRole('link', { name: '选股', exact: true }).count() === 0) {
+      await nav.getByRole('button', { name: '展开市场工具' }).click();
+    }
     await nav.getByRole('link', { name: '选股', exact: true }).click();
     await expect(page).toHaveURL(/\/screening$/);
     await expect(page.getByRole('button', { name: /运行选股/ })).toBeDisabled();

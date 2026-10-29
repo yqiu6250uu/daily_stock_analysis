@@ -27,6 +27,7 @@ import { isWatchlistRowPendingAnalysis } from '../components/watchlist/watchlist
 import { useDashboardLifecycle, useHomeDashboardState } from '../hooks';
 import { useWatchlist } from '../hooks/useWatchlist';
 import { useUiLanguage } from '../contexts/UiLanguageContext';
+import type { UiTextKey } from '../i18n/uiText';
 import type { SetupStatusResponse } from '../types/systemConfig';
 import { normalizeReportLanguage } from '../utils/reportLanguage';
 import type {
@@ -632,11 +633,16 @@ const HomePage: React.FC = () => {
     if (!setupStatus) {
       return '';
     }
+    const checkLabels: Record<string, UiTextKey> = {
+      llm_primary: 'home.setupCheck.llmPrimary',
+      llm_agent: 'home.setupCheck.llmAgent',
+      stock_list: 'home.setupCheck.stockList',
+    };
     const requiredNeedsAction = setupStatus.checks
       .filter((check) => check.required && check.status === 'needs_action')
-      .map((check) => check.title);
+      .map((check) => t(checkLabels[check.key] ?? 'home.setupCheck.other'));
     return requiredNeedsAction.slice(0, 3).join(uiLanguage === 'en' ? ', ' : '、');
-  }, [setupStatus, uiLanguage]);
+  }, [setupStatus, t, uiLanguage]);
 
   const handleCompletedTaskDataRefreshStarted = useCallback((task: TaskInfo) => {
     if (task.reportType === 'market_review') {
@@ -881,9 +887,10 @@ const HomePage: React.FC = () => {
         originalQuery: query,
         selectionSource: selectionSource ?? 'manual',
         skills: analysisSkills ?? selectedAnalysisSkills,
+        reportLanguage: uiLanguage,
       });
     },
-    [query, selectedAnalysisSkills, submitAnalysis],
+    [query, selectedAnalysisSkills, submitAnalysis, uiLanguage],
   );
 
   useEffect(() => {
@@ -923,8 +930,9 @@ const HomePage: React.FC = () => {
       selectionSource: 'manual',
       forceRefresh: true,
       skills: selectedAnalysisSkills,
+      reportLanguage: uiLanguage,
     });
-  }, [selectedAnalysisSkills, selectedReport, submitAnalysis]);
+  }, [selectedAnalysisSkills, selectedReport, submitAnalysis, uiLanguage]);
 
   const openTaskRunFlow = useCallback((task: TaskInfo) => {
     const stock = task.stockName || task.stockCode || task.taskId;
@@ -1080,12 +1088,12 @@ const HomePage: React.FC = () => {
       const result = await analysisApi.triggerMarketReview({
         sendNotification: notify,
         regions: marketReviewRegionOverride,
+        reportLanguage: uiLanguage,
       });
       setMarketReviewNotice({
         variant: 'success',
         title: t('home.marketReviewSubmitted'),
         message: t('home.marketReviewSubmittedWithRegion', {
-          message: result.message,
           region: result.region,
         }),
       });
@@ -1101,7 +1109,7 @@ const HomePage: React.FC = () => {
     } finally {
       setIsSubmittingMarketReview(false);
     }
-  }, [marketReviewRegionOverride, notify, pollMarketReviewStatus, scrollMarketReviewFeedbackIntoView, t]);
+  }, [marketReviewRegionOverride, notify, pollMarketReviewStatus, scrollMarketReviewFeedbackIntoView, t, uiLanguage]);
 
   const todayDateKey = getTodayInShanghai();
   useEffect(() => {
@@ -1313,6 +1321,7 @@ const HomePage: React.FC = () => {
             reportType: 'detailed',
             notify,
             skills: selectedAnalysisSkills,
+            reportLanguage: uiLanguage,
           });
           const counts = countBatchAccepted(result);
           acceptedCount += counts.accepted;
@@ -1413,6 +1422,7 @@ const HomePage: React.FC = () => {
     refreshActiveTasks,
     selectedAnalysisSkills,
     t,
+    uiLanguage,
     watchlistTodayStatusBlocked,
     watchlistState.watchlistCodes,
   ]);
@@ -1427,7 +1437,7 @@ const HomePage: React.FC = () => {
     const marketReviewItem: StockBarItem = {
       id: latestMarketReview.id,
       stockCode: 'MARKET',
-      stockName: latestMarketReview.stockName || t('home.marketReview'),
+      stockName: t('home.marketReview'),
       reportType: 'market_review',
       sentimentScore: latestMarketReview.sentimentScore,
       operationAdvice: latestMarketReview.operationAdvice,

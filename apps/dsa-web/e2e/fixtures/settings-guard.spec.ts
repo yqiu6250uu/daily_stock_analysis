@@ -99,6 +99,9 @@ test('invalid LLM drafts and scheduler overrides survive category changes and re
   await page.getByRole('button', { name: /primary/i }).click();
   await page.getByLabel('渠道名称', { exact: true }).fill('');
   await categories.getByRole('button', { name: /基础设置/ }).click();
+  if (await page.getByRole('link', { name: '告警', exact: true }).count() === 0) {
+    await page.getByRole('button', { name: '展开市场工具' }).click();
+  }
   await page.getByRole('link', { name: '告警', exact: true }).click();
   await expect(page.getByRole('heading', { name: '存在未保存的修改' })).toContainText('存在未保存的修改');
   await page.getByRole('button', { name: '取消', exact: true }).click();
@@ -156,6 +159,9 @@ test('accepted backup import discards hidden model drafts and scheduler override
   await expect(page.getByLabel('渠道名称', { exact: true })).toHaveValue('primary');
   await categories.getByRole('button', { name: /基础设置/ }).click();
   await expect(page.getByRole('textbox', { name: 'Fixture value' })).toHaveValue('imported');
+  if (await page.getByRole('link', { name: '告警', exact: true }).count() === 0) {
+    await page.getByRole('button', { name: '展开市场工具' }).click();
+  }
   await page.getByRole('link', { name: '告警', exact: true }).click();
   await expect(page).toHaveURL(/\/alerts$/);
 });

@@ -7,7 +7,7 @@ import asyncio
 import json
 import logging
 import uuid
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Literal, Optional
 
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import StreamingResponse
@@ -40,6 +40,25 @@ TOOL_DISPLAY_NAMES: Dict[str, str] = {
     "get_stock_backtest_summary": "获取个股回测数据",
 }
 
+TOOL_DISPLAY_NAMES_EN: Dict[str, str] = {
+    "get_realtime_quote": "Get latest quote",
+    "get_daily_history": "Get price history",
+    "get_chip_distribution": "Analyze holder distribution",
+    "get_analysis_context": "Get analysis context",
+    "get_stock_info": "Get company fundamentals",
+    "search_stock_news": "Search company news",
+    "search_comprehensive_intel": "Search research sources",
+    "analyze_trend": "Analyze price trend",
+    "calculate_ma": "Calculate moving averages",
+    "get_volume_analysis": "Analyze trading volume",
+    "analyze_pattern": "Identify chart patterns",
+    "get_market_indices": "Get market indexes",
+    "get_sector_rankings": "Analyze sectors",
+    "get_skill_backtest_summary": "Get skill backtest summary",
+    "get_strategy_backtest_summary": "Get strategy backtest summary",
+    "get_stock_backtest_summary": "Get company backtest data",
+}
+
 logger = logging.getLogger(__name__)
 
 router = APIRouter()
@@ -58,6 +77,7 @@ class ChatRequest(BaseModel):
         validation_alias=AliasChoices("skills", "strategies"),
     )
     context: Optional[Dict[str, Any]] = None  # Previous analysis context for data reuse
+    report_language: Optional[Literal["zh", "en"]] = None
 
     @property
     def effective_skills(self) -> Optional[List[str]]:
@@ -73,7 +93,9 @@ def _build_agent_chat_context(request: ChatRequest, config, skills: Optional[Lis
     if skills is not None:
         context["skills"] = skills
     report_language = context.get("report_language")
-    if report_language is None or (isinstance(report_language, str) and not report_language.strip()):
+    if request.report_language is not None:
+        context["report_language"] = request.report_language
+    elif report_language is None or (isinstance(report_language, str) and not report_language.strip()):
         context["report_language"] = config.report_language
     return context
 
@@ -545,12 +567,15 @@ async def agent_chat_stream(
     loop = asyncio.get_running_loop()
     queue: asyncio.Queue = asyncio.Queue()
     request_id = request.request_id or str(uuid.uuid4())
+    progress_names = (TOOL_DISPLAY_NAMES_EN if _build_agent_chat_context(
+        request, config, None
+    )["report_language"] == "en" else TOOL_DISPLAY_NAMES)
 
     def progress_callback(event: dict):
         # Enrich tool events with display names
         if event.get("type") in ("tool_start", "tool_done"):
             tool = event.get("tool", "")
-            event["display_name"] = TOOL_DISPLAY_NAMES.get(tool, tool)
+            event["display_name"] = progress_names.get(tool, tool)
         asyncio.run_coroutine_threadsafe(queue.put(event), loop)
 
     def run_sync(executor, turn):

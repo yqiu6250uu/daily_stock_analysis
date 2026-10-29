@@ -4,9 +4,11 @@ import { historyApi } from '../../api/history';
 import type { ReportLanguage } from '../../types/analysis';
 import { markdownToPlainText } from '../../utils/markdown';
 import { getReportText, normalizeReportLanguage } from '../../utils/reportLanguage';
+import { useUiLanguage } from '../../contexts/UiLanguageContext';
 import { Tooltip } from '../common/Tooltip';
 import { ReportMarkdownBody } from './ReportMarkdownBody';
 import { ShareImageButton } from './ShareImageButton';
+import { OriginalReportDisclosure } from './OriginalReportDisclosure';
 
 export interface ReportMarkdownPanelProps {
   recordId: number;
@@ -23,7 +25,9 @@ export const ReportMarkdownPanel: React.FC<ReportMarkdownPanelProps> = ({
   onRequestClose,
   reportLanguage = 'zh',
 }) => {
-  const text = getReportText(normalizeReportLanguage(reportLanguage));
+  const { language: uiLanguage } = useUiLanguage();
+  const text = getReportText(uiLanguage);
+  const sourceLanguage = normalizeReportLanguage(reportLanguage);
   const loadReportFailedText = text.loadReportFailed;
   const [content, setContent] = useState<string>('');
   const [isLoading, setIsLoading] = useState(true);
@@ -92,7 +96,7 @@ export const ReportMarkdownPanel: React.FC<ReportMarkdownPanelProps> = ({
             </svg>
           </div>
           <div>
-            <h2 className="text-base font-semibold text-foreground">{stockName || stockCode}</h2>
+            <h2 className="text-base font-semibold text-foreground">{uiLanguage === sourceLanguage ? stockName || stockCode : stockCode}</h2>
             <p className="text-xs text-muted-text">{text.fullReport}</p>
           </div>
         </div>
@@ -101,7 +105,7 @@ export const ReportMarkdownPanel: React.FC<ReportMarkdownPanelProps> = ({
           <ShareImageButton
             recordId={recordId}
             reportTitle={`${stockName || stockCode}-${stockCode}`}
-            reportLanguage={reportLanguage}
+            reportLanguage={uiLanguage}
           />
           <Tooltip content={text.copyMarkdownSource}>
             <span className="inline-flex">
@@ -171,7 +175,7 @@ export const ReportMarkdownPanel: React.FC<ReportMarkdownPanelProps> = ({
           </button>
         </div>
       ) : (
-        <ReportMarkdownBody content={content} />
+        <OriginalReportDisclosure sourceLanguage={sourceLanguage}><ReportMarkdownBody content={content} /></OriginalReportDisclosure>
       )}
 
       <div className="home-divider mt-6 flex justify-end border-t pt-4">

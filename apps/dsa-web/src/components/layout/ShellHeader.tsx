@@ -20,6 +20,7 @@ const TITLES: Record<string, { title: UiTextKey; description: UiTextKey }> = {
   '/backtest': { title: 'layout.route.backtest.title', description: 'layout.route.backtest.description' },
   '/alerts': { title: 'layout.route.alerts.title', description: 'layout.route.alerts.description' },
   '/data': { title: 'layout.route.dataCenter.title', description: 'layout.route.dataCenter.description' },
+  '/research': { title: 'layout.route.research.title', description: 'layout.route.research.description' },
   '/usage': { title: 'layout.route.usage.title', description: 'layout.route.usage.description' },
   '/settings': { title: 'layout.route.settings.title', description: 'layout.route.settings.description' },
 };
@@ -31,7 +32,7 @@ export const ShellHeader: React.FC<ShellHeaderProps> = ({
 }) => {
   const location = useLocation();
   const { t } = useUiLanguage();
-  const current = TITLES[location.pathname];
+  const current = TITLES[location.pathname] ?? (location.pathname.startsWith('/research/') ? TITLES['/research'] : undefined);
 
   return (
     <header className="sticky top-0 z-30 border-b border-border/60 bg-background/84 backdrop-blur-xl">

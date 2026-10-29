@@ -100,9 +100,9 @@ class MarketReviewLocalizationTestCase(unittest.TestCase):
 
         self.assertEqual(result, "## 2026-04-10 A-share Market Recap\n\nBody")
         saved_content = notifier.save_report_to_file.call_args.args[0]
-        self.assertTrue(saved_content.startswith("[dsa-market-region]: # (cn)\n\n# 🎯 Market Review\n\n"))
+        self.assertTrue(saved_content.startswith("[dsa-market-region]: # (cn)\n\n# Market Review\n\n"))
         sent_content = notifier.send.call_args.args[0]
-        self.assertTrue(sent_content.startswith("[dsa-market-region]: # (cn)\n\n🎯 Market Review\n\n"))
+        self.assertTrue(sent_content.startswith("[dsa-market-region]: # (cn)\n\nMarket Review\n\n"))
         self.assertTrue(notifier.send.call_args.kwargs["email_send_to_all"])
         self.assertEqual(notifier.send.call_args.kwargs["route_type"], "report")
         persist_history.assert_called_once()
@@ -167,7 +167,7 @@ class MarketReviewLocalizationTestCase(unittest.TestCase):
         self.assertEqual(persist_history.call_args.kwargs["config"], request_config)
         self.assertTrue(
             notifier.save_report_to_file.call_args.args[0].startswith(
-                "[dsa-market-region]: # (cn)\n\n# 🎯 Market Review\n\n"
+                "[dsa-market-region]: # (cn)\n\n# Market Review\n\n"
             )
         )
         self.assertEqual(result.market_review_payload["language"], "en")
@@ -299,7 +299,7 @@ class MarketReviewLocalizationTestCase(unittest.TestCase):
         self.assertIn("# Japan Market Recap\n\nJP body", result)
         self.assertIn("# Korea Market Recap\n\nKR body", result)
         saved_content = notifier.save_report_to_file.call_args.args[0]
-        self.assertTrue(saved_content.startswith("# 🎯 Market Review\n\n"))
+        self.assertTrue(saved_content.startswith("# Market Review\n\n"))
         self.assertIn("# A-share Market Recap\n\nCN body", saved_content)
         self.assertIn("> Next market recap follows", saved_content)
         self.assertIn("# HK Market Recap\n\nHK body", saved_content)
@@ -315,7 +315,7 @@ class MarketReviewLocalizationTestCase(unittest.TestCase):
             {"cn", "hk", "us"},
         )
         sent_content = notifier.send.call_args.args[0]
-        self.assertTrue(sent_content.startswith("🎯 Market Review\n\n"))
+        self.assertTrue(sent_content.startswith("Market Review\n\n"))
         self.assertIn("# US Market Recap\n\nUS body", sent_content)
         self.assertIn("# Japan Market Recap\n\nJP body", sent_content)
         self.assertIn("# Korea Market Recap\n\nKR body", sent_content)

@@ -2678,6 +2678,7 @@ describe('HomePage', () => {
       expect(analysisApi.triggerMarketReview).toHaveBeenCalledWith({
         sendNotification: true,
         regions: undefined,
+        reportLanguage: 'zh',
       });
     });
     expect(await screen.findByText('大盘复盘已完成')).toBeInTheDocument();
@@ -2721,12 +2722,13 @@ describe('HomePage', () => {
       expect(analysisApi.triggerMarketReview).toHaveBeenCalledWith({
         sendNotification: true,
         regions: ['cn', 'us'],
+        reportLanguage: 'zh',
       });
     });
     expect(systemConfigApi.getConfig).not.toHaveBeenCalled();
   });
 
-  it('keeps report language unset when only the UI language is English', async () => {
+  it('passes the selected English language to stock and market report generation', async () => {
     window.localStorage.setItem(UI_LANGUAGE_STORAGE_KEY, 'en');
     vi.mocked(historyApi.getList).mockResolvedValue({
       total: 0,
@@ -2776,12 +2778,13 @@ describe('HomePage', () => {
       expect(analysisApi.triggerMarketReview).toHaveBeenCalledWith({
         sendNotification: true,
         regions: undefined,
+        reportLanguage: 'en',
       });
     });
-    expect(vi.mocked(analysisApi.analyzeAsync).mock.calls[0]?.[0]).not.toHaveProperty('reportLanguage');
+    expect(vi.mocked(analysisApi.analyzeAsync).mock.calls[0]?.[0]).toHaveProperty('reportLanguage', 'en');
   });
 
-  it('uses the payload language for live market review controls', async () => {
+  it('keeps live market review controls in the selected UI language', async () => {
     vi.mocked(historyApi.getList).mockResolvedValue({
       total: 0,
       page: 1,
@@ -2822,9 +2825,9 @@ describe('HomePage', () => {
 
     fireEvent.click(await screen.findByRole('button', { name: '大盘复盘' }));
 
-    expect(await screen.findByRole('button', { name: 'Copy Markdown Source' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Copy Plain Text' })).toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: '复制 Markdown 源码' })).not.toBeInTheDocument();
+    expect(await screen.findByRole('button', { name: '复制 Markdown 源码' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: '复制纯文本' })).toBeInTheDocument();
+    expect(screen.getByRole('note')).toHaveTextContent('此历史报告以英文撰写');
   });
 
   it('scrolls the dashboard to market review feedback after toolbar clicks', async () => {
@@ -3291,7 +3294,7 @@ describe('HomePage', () => {
       originalQuery: '600519',
       forceRefresh: true,
     }));
-    expect(vi.mocked(analysisApi.analyzeAsync).mock.calls[0]?.[0]).not.toHaveProperty('reportLanguage');
+    expect(vi.mocked(analysisApi.analyzeAsync).mock.calls[0]?.[0]).toHaveProperty('reportLanguage', 'zh');
   });
 
   it('passes the selected strategy when submitting stock analysis', async () => {

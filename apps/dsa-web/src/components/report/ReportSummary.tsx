@@ -8,6 +8,8 @@ import { ReportDiagnostics } from './ReportDiagnostics';
 import { AnalysisContextSummary } from './AnalysisContextSummary';
 import { MarketReviewReportView } from './MarketReviewReportView';
 import { getReportText, normalizeReportLanguage } from '../../utils/reportLanguage';
+import { useUiLanguage } from '../../contexts/UiLanguageContext';
+import { OriginalReportDisclosure } from './OriginalReportDisclosure';
 
 interface ReportSummaryProps {
   data: AnalysisResult | AnalysisReport;
@@ -39,8 +41,9 @@ export const ReportSummary: React.FC<ReportSummaryProps> = ({
   const diagnosticSummary = 'diagnosticSummary' in data ? data.diagnosticSummary : undefined;
 
   const { meta, summary, strategy, details } = report;
+  const { language: uiLanguage } = useUiLanguage();
   const reportLanguage = normalizeReportLanguage(meta.reportLanguage);
-  const text = getReportText(reportLanguage);
+  const text = getReportText(uiLanguage);
   const modelUsed = (meta.modelUsed || '').trim();
   const shouldShowModel = Boolean(
     modelUsed && !['unknown', 'error', 'none', 'null', 'n/a'].includes(modelUsed.toLowerCase()),
@@ -58,6 +61,7 @@ export const ReportSummary: React.FC<ReportSummaryProps> = ({
   }
 
   return (
+    <OriginalReportDisclosure sourceLanguage={reportLanguage}>
     <div className="space-y-5 pb-8 animate-fade-in">
       {/* 概览区（首屏） */}
       <ReportOverview
@@ -66,30 +70,31 @@ export const ReportSummary: React.FC<ReportSummaryProps> = ({
         details={details}
         isHistory={isHistory}
         watchlist={watchlist}
+        language={uiLanguage}
       />
 
       {/* 策略点位区 */}
-      <ReportStrategy strategy={strategy} language={reportLanguage} />
+      <ReportStrategy strategy={strategy} language={uiLanguage} />
 
       {/* 资讯区 */}
-      <ReportNews recordId={recordId} limit={8} language={reportLanguage} />
+      <ReportNews recordId={recordId} limit={8} language={uiLanguage} />
 
       {/* 输入数据块低敏摘要 */}
       <AnalysisContextSummary
         overview={details?.analysisContextPackOverview}
-        language={reportLanguage}
+        language={uiLanguage}
       />
 
       {/* 运行诊断摘要 */}
       <ReportDiagnostics
         recordId={recordId}
         summary={diagnosticSummary}
-        language={reportLanguage}
+        language={uiLanguage}
         onOpenRunFlow={onOpenRunFlow}
       />
 
       {/* 透明度与追溯区 */}
-      <ReportDetails details={details} recordId={recordId} language={reportLanguage} />
+      <ReportDetails details={details} recordId={recordId} language={uiLanguage} />
 
       {/* 分析模型标记（Issue #528）— 报告末尾 */}
       {shouldShowModel && (
@@ -98,5 +103,6 @@ export const ReportSummary: React.FC<ReportSummaryProps> = ({
         </p>
       )}
     </div>
+    </OriginalReportDisclosure>
   );
 };

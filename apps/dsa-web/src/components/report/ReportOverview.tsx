@@ -2,6 +2,7 @@ import type React from 'react';
 import type {
   ReportDetails as ReportDetailsType,
   ReportMeta,
+  ReportLanguage,
   ReportSummary as ReportSummaryType,
 } from '../../types/analysis';
 import { Badge, Button, Card, ScoreGauge } from '../common';
@@ -16,6 +17,7 @@ interface ReportOverviewProps {
   summary: ReportSummaryType;
   details?: ReportDetailsType;
   isHistory?: boolean;
+  language?: ReportLanguage;
   watchlist?: {
     isInWatchlist: (code: string) => boolean;
     onToggle: (code: string) => void;
@@ -167,9 +169,10 @@ export const ReportOverview: React.FC<ReportOverviewProps> = ({
   summary,
   details,
   watchlist,
+  language,
 }) => {
   const { t } = useUiLanguage();
-  const reportLanguage = normalizeReportLanguage(meta.reportLanguage);
+  const reportLanguage = normalizeReportLanguage(language ?? meta.reportLanguage);
   const text = getReportText(reportLanguage);
   const marketPhaseLabel = getMarketPhaseSummaryLabel(meta.marketPhaseSummary, reportLanguage);
   const partialBarLabel = meta.marketPhaseSummary?.isPartialBar === true

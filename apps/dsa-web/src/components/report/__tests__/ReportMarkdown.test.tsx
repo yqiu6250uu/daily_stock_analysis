@@ -2,6 +2,8 @@ import { render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { historyApi } from '../../../api/history';
 import { ReportMarkdown } from '../ReportMarkdown';
+import { UiLanguageProvider } from '../../../contexts/UiLanguageContext';
+import { UI_LANGUAGE_STORAGE_KEY } from '../../../utils/uiLanguage';
 
 vi.mock('../../../api/history', () => ({
   historyApi: {
@@ -16,18 +18,22 @@ describe('ReportMarkdown', () => {
 
   it('uses localized copy labels for English reports', async () => {
     vi.mocked(historyApi.getMarkdown).mockResolvedValue('# Full report');
+    window.localStorage.setItem(UI_LANGUAGE_STORAGE_KEY, 'en');
 
     render(
-      <ReportMarkdown
-        recordId={1}
-        stockName="Apple"
-        stockCode="AAPL"
-        reportLanguage="en"
-        onClose={() => {}}
-      />
+      <UiLanguageProvider>
+        <ReportMarkdown
+          recordId={1}
+          stockName="Apple"
+          stockCode="AAPL"
+          reportLanguage="en"
+          onClose={() => {}}
+        />
+      </UiLanguageProvider>
     );
 
     expect(await screen.findByRole('button', { name: 'Copy Markdown Source' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Copy Plain Text' })).toBeInTheDocument();
+    window.localStorage.removeItem(UI_LANGUAGE_STORAGE_KEY);
   });
 });

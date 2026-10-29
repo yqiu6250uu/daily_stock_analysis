@@ -525,6 +525,22 @@ describe('ChatPage', () => {
     expect(screen.getByRole('button', { name: 'Refresh session (keep your draft and retry)' })).toBeInTheDocument();
   });
 
+  it('keeps chat navigation, controls and example questions in English', async () => {
+    window.localStorage.setItem(UI_LANGUAGE_STORAGE_KEY, 'en');
+    render(<UiLanguageProvider><MemoryRouter initialEntries={['/chat']}><ChatPage /></MemoryRouter></UiLanguageProvider>);
+    expect(await screen.findByRole('heading', { name: 'Ask' })).toBeInTheDocument();
+    expect(screen.getByText('Conversation history')).toBeInTheDocument();
+    expect(screen.getByPlaceholderText(/Analyze AAPL/)).toBeInTheDocument();
+    expect(screen.queryByText('开始问股')).not.toBeInTheDocument();
+    expect(document.title).toBe('Ask · EquityLens');
+    fireEvent.change(screen.getByPlaceholderText(/Analyze AAPL/), { target: { value: 'Analyze NVDA' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Send' }));
+    await waitFor(() => expect(mockStartStream).toHaveBeenCalledWith(
+      expect.objectContaining({ message: 'Analyze NVDA', report_language: 'en' }),
+      expect.any(Object),
+    ));
+  });
+
   it('renders the new Codex status copy in English when the UI language is English', async () => {
     window.localStorage.setItem(UI_LANGUAGE_STORAGE_KEY, 'en');
     mockGetStatus.mockResolvedValueOnce({

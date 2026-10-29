@@ -19,6 +19,8 @@ import { resolveLoginRedirect } from './utils/loginRedirect';
 import './App.css';
 
 const HomePage = lazy(() => import('./pages/HomePage'));
+const ResearchHomePage = lazy(() => import('./pages/ResearchHomePage'));
+const ToolsIndexPage = lazy(() => import('./pages/ToolsIndexPage'));
 const BacktestPage = lazy(() => import('./pages/BacktestPage'));
 const SettingsPage = lazy(() => import('./pages/SettingsPage'));
 const LoginPage = lazy(() => import('./pages/LoginPage'));
@@ -30,6 +32,7 @@ const AlertsPage = lazy(() => import('./pages/AlertsPage'));
 const TokenUsagePage = lazy(() => import('./pages/TokenUsagePage'));
 const StockScreeningPage = lazy(() => import('./pages/StockScreeningPage'));
 const DataCenterPage = lazy(() => import('./pages/DataCenterPage'));
+const CompanyResearchPage = lazy(() => import('./pages/CompanyResearchPage'));
 
 const AppContent: React.FC = () => {
   const location = useLocation();
@@ -88,12 +91,16 @@ const AppContent: React.FC = () => {
 };
 
 const routeChildren = [
-  { path: '/', element: <HomePage /> },
+  { path: '/', element: <ResearchHomePage /> },
+  { path: '/tools', element: <ToolsIndexPage /> },
+  { path: '/tools/daily-analysis', element: <HomePage /> },
   { path: '/chat', element: <ChatPage /> },
   { path: '/portfolio', element: <PortfolioPage /> },
   { path: '/decision-signals', element: <DecisionSignalsPage /> },
   { path: '/screening', element: <StockScreeningPage /> },
   { path: '/data', element: <DataCenterPage /> },
+  { path: '/research', element: <CompanyResearchPage /> },
+  { path: '/research/:ticker', element: <CompanyResearchPage /> },
   { path: '/backtest', element: <BacktestPage /> },
   { path: '/alerts', element: <AlertsPage /> },
   { path: '/usage', element: <TokenUsagePage /> },

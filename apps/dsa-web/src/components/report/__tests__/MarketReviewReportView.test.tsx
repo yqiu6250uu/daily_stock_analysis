@@ -1,6 +1,9 @@
+import type React from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
+import { UiLanguageProvider } from '../../../contexts/UiLanguageContext';
 import type { AnalysisReport, MarketReviewPayload } from '../../../types/analysis';
+import { UI_LANGUAGE_STORAGE_KEY } from '../../../utils/uiLanguage';
 import { MarketReviewReportView } from '../MarketReviewReportView';
 
 vi.mock('../../../api/history', () => ({
@@ -105,9 +108,28 @@ const noBreadthMarketReviewPayload: MarketReviewPayload = {
   sections: [],
 };
 
+const renderEnglish = (view: React.ReactNode) => {
+  window.localStorage.setItem(UI_LANGUAGE_STORAGE_KEY, 'en');
+  return render(<UiLanguageProvider>{view}</UiLanguageProvider>);
+};
+
+afterEach(() => window.localStorage.removeItem(UI_LANGUAGE_STORAGE_KEY));
+
 describe('MarketReviewReportView', () => {
+  it('keeps English interface labels while gating an older Chinese report', () => {
+    renderEnglish(<MarketReviewReportView
+      report={{ ...englishMarketReviewReport, meta: { ...englishMarketReviewReport.meta, reportLanguage: 'zh', stockName: '🎯 大盘复盘' } }}
+      content="# 🎯 大盘复盘\n\n## 市场情绪\n\n原始中文报告"
+      reportLanguage="zh"
+    />);
+    expect(screen.getByRole('heading', { name: 'Market review' })).toBeInTheDocument();
+    expect(screen.getByRole('note')).toHaveTextContent('written in Chinese');
+    expect(screen.queryByText('原始中文报告')).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Inspect original report' }));
+    expect(screen.getByTestId('market-review-report')).toHaveTextContent('原始中文报告');
+  });
   it('uses localized summary card labels and fallbacks for English reports', () => {
-    render(
+    renderEnglish(
       <MarketReviewReportView
         report={englishMarketReviewReport}
         content="# Market Review"
@@ -185,7 +207,7 @@ describe('MarketReviewReportView', () => {
   });
 
   it('shows "No data" when breadth is not available for a market review payload', () => {
-    render(
+    renderEnglish(
       <MarketReviewReportView
         payload={noBreadthMarketReviewPayload}
         content="# Market Review"
@@ -229,7 +251,7 @@ describe('MarketReviewReportView', () => {
       }],
     };
 
-    render(
+    renderEnglish(
       <MarketReviewReportView
         payload={payload}
         content="# Market Review"
@@ -271,7 +293,7 @@ describe('MarketReviewReportView', () => {
       }],
     } as unknown as MarketReviewPayload;
 
-    render(
+    renderEnglish(
       <MarketReviewReportView
         payload={payload}
         content="# Market Review"

@@ -28,7 +28,15 @@ vi.mock('./stores/agentChatStore', () => ({
 }));
 
 vi.mock('./pages/HomePage', () => ({
-  default: () => <div data-testid="home-page">Home</div>,
+  default: () => <div data-testid="daily-analysis-page">Daily analysis</div>,
+}));
+
+vi.mock('./pages/ResearchHomePage', () => ({
+  default: () => <div data-testid="research-home-page">Research Home</div>,
+}));
+
+vi.mock('./pages/ToolsIndexPage', () => ({
+  default: () => <div data-testid="tools-index-page">Market Tools</div>,
 }));
 
 vi.mock('./pages/ChatPage', () => ({
@@ -66,6 +74,10 @@ vi.mock('./pages/SettingsPage', () => ({
 
 vi.mock('./pages/DataCenterPage', () => ({
   default: () => <div data-testid="data-center-page">Data center</div>,
+}));
+
+vi.mock('./pages/CompanyResearchPage', () => ({
+  default: () => <div data-testid="company-research-page">Company research</div>,
 }));
 
 vi.mock('./pages/NotFoundPage', () => ({
@@ -133,7 +145,7 @@ describe('App routing behavior', () => {
     expect(await screen.findByTestId('chat-page')).toBeInTheDocument();
     expect(setCurrentRoute).toHaveBeenCalledWith('/chat');
     expect(screen.queryByTestId('login-page')).not.toBeInTheDocument();
-    expect(screen.queryByTestId('home-page')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('research-home-page')).not.toBeInTheDocument();
   });
 
   it('preserves the query and fragment when redirecting a protected deep link to login', async () => {
@@ -166,7 +178,7 @@ describe('App routing behavior', () => {
 
     expect(await screen.findByTestId('settings-page')).toBeInTheDocument();
     expect(window.location.pathname + window.location.search + window.location.hash).toBe(destination);
-    expect(screen.queryByTestId('home-page')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('research-home-page')).not.toBeInTheDocument();
   });
 
   it.each([
@@ -190,7 +202,7 @@ describe('App routing behavior', () => {
 
     render(<App />);
 
-    expect(await screen.findByTestId('home-page')).toBeInTheDocument();
+    expect(await screen.findByTestId('research-home-page')).toBeInTheDocument();
     expect(window.location.origin).toBe(origin);
     expect(window.location.pathname + window.location.search + window.location.hash).toBe('/');
   });
@@ -202,7 +214,7 @@ describe('App routing behavior', () => {
 
     expect(await screen.findByTestId('token-usage-page')).toBeInTheDocument();
     expect(setCurrentRoute).toHaveBeenCalledWith('/usage');
-    expect(screen.queryByTestId('home-page')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('research-home-page')).not.toBeInTheDocument();
   });
 
   it('routes /decision-signals to the AI signals page after auth is ready', async () => {
@@ -212,7 +224,7 @@ describe('App routing behavior', () => {
 
     expect(await screen.findByTestId('decision-signals-page')).toBeInTheDocument();
     expect(setCurrentRoute).toHaveBeenCalledWith('/decision-signals');
-    expect(screen.queryByTestId('home-page')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('research-home-page')).not.toBeInTheDocument();
   });
 
   it('routes /data to the data capability page after auth is ready', async () => {
@@ -222,6 +234,26 @@ describe('App routing behavior', () => {
 
     expect(await screen.findByTestId('data-center-page')).toBeInTheDocument();
     expect(setCurrentRoute).toHaveBeenCalledWith('/data');
+  });
+
+  it('routes /research/NVDA to company financial research', async () => {
+    window.history.pushState({}, '', '/research/NVDA');
+    render(<App />);
+    expect(await screen.findByTestId('company-research-page')).toBeInTheDocument();
+    expect(setCurrentRoute).toHaveBeenCalledWith('/research/NVDA');
+  });
+
+  it('keeps the original analysis workflow available through the tools workspace', async () => {
+    window.history.pushState({}, '', '/tools/daily-analysis');
+    render(<App />);
+    expect(await screen.findByTestId('daily-analysis-page')).toBeInTheDocument();
+    expect(setCurrentRoute).toHaveBeenCalledWith('/tools/daily-analysis');
+  });
+
+  it('routes the tools index without changing legacy deep links', async () => {
+    window.history.pushState({}, '', '/tools');
+    render(<App />);
+    expect(await screen.findByTestId('tools-index-page')).toBeInTheDocument();
   });
 
   it('redirects authenticated login visits back to the home page', async () => {
@@ -234,7 +266,7 @@ describe('App routing behavior', () => {
 
     render(<App />);
 
-    expect(await screen.findByTestId('home-page')).toBeInTheDocument();
+    expect(await screen.findByTestId('research-home-page')).toBeInTheDocument();
     expect(screen.queryByTestId('login-page')).not.toBeInTheDocument();
   });
 
@@ -252,6 +284,9 @@ describe('App routing behavior', () => {
       expect(screen.getByRole('button', { name: '返回首页' })).toBeInTheDocument();
 
       chatPageShouldThrow.value = false;
+      if (!screen.queryByRole('link', { name: '持仓' })) {
+        fireEvent.click(screen.getByRole('button', { name: '展开市场工具' }));
+      }
       fireEvent.click(screen.getByRole('link', { name: '持仓' }));
 
       expect(await screen.findByTestId('portfolio-page')).toBeInTheDocument();

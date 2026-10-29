@@ -2,6 +2,7 @@ import type React from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { BarChart3, Clipboard, FileText, Gauge, Layers, ShieldAlert, TrendingUp, WalletCards, Workflow } from 'lucide-react';
 import { historyApi } from '../../api/history';
+import { useUiLanguage } from '../../contexts/UiLanguageContext';
 import { formatUiText, UI_TEXT } from '../../i18n/uiText';
 import type {
   AnalysisReport,
@@ -14,6 +15,7 @@ import { getReportText, normalizeReportLanguage } from '../../utils/reportLangua
 import { Card } from '../common';
 import { Tooltip } from '../common/Tooltip';
 import { ReportMarkdownBody } from './ReportMarkdownBody';
+import { OriginalReportDisclosure } from './OriginalReportDisclosure';
 import { ShareImageButton } from './ShareImageButton';
 
 interface MarketReviewReportViewProps {
@@ -102,12 +104,12 @@ const getSectionIcon = (title: string): typeof FileText => {
   return FileText;
 };
 
-const splitMarketReviewSections = (markdown: string): MarketReviewSection[] => {
+const splitMarketReviewSections = (markdown: string, language: ReportLanguage): MarketReviewSection[] => {
   const matches = Array.from(markdown.matchAll(SECTION_HEADING_PATTERN));
   if (matches.length === 0) {
     return [{
       id: 'full-review',
-      title: '复盘正文',
+      title: language === 'en' ? 'Original review' : language === 'ko' ? '원문' : '复盘正文',
       content: markdown,
       icon: FileText,
     }];
@@ -117,7 +119,7 @@ const splitMarketReviewSections = (markdown: string): MarketReviewSection[] => {
   const sections: MarketReviewSection[] = intro
     ? [{
         id: 'overview',
-        title: '复盘概览',
+        title: language === 'en' ? 'Review overview' : language === 'ko' ? '리뷰 개요' : '复盘概览',
         content: intro,
         icon: FileText,
       }]
@@ -369,10 +371,11 @@ export const MarketReviewReportView: React.FC<MarketReviewReportViewProps> = ({
   className = '',
   onOpenRunFlow,
 }) => {
+  const { language: uiLanguage, t } = useUiLanguage();
   const normalizedReportLanguage = normalizeReportLanguage(reportLanguage);
-  const text = getReportText(normalizedReportLanguage);
-  const runFlowText = UI_TEXT[normalizedReportLanguage === 'ko' ? 'en' : normalizedReportLanguage];
-  const marketReviewText = MARKET_REVIEW_TEXT[normalizedReportLanguage];
+  const text = getReportText(uiLanguage);
+  const runFlowText = UI_TEXT[uiLanguage];
+  const marketReviewText = MARKET_REVIEW_TEXT[uiLanguage];
   const [loadedMarkdown, setLoadedMarkdown] = useState<LoadedMarkdown | null>(null);
   const [loadError, setLoadError] = useState<LoadError | null>(null);
   const [copiedType, setCopiedType] = useState<CopyType | null>(null);
@@ -385,17 +388,18 @@ export const MarketReviewReportView: React.FC<MarketReviewReportViewProps> = ({
   const error = loadError && loadError.recordId === recordId ? loadError.message : null;
   const hasStructuredContent = Boolean(marketReviewPayload?.sections?.length || marketReviewPayload?.markets);
   const isLoading = Boolean(recordId && !providedContent && !hasStructuredContent && loadedMarkdown?.recordId !== recordId && !error);
-  const displayTitle = marketReviewPayload?.rootTitle || marketReviewPayload?.title || meta?.stockName || 'Market Review';
+  const originalTitle = marketReviewPayload?.rootTitle || marketReviewPayload?.title || meta?.stockName || '';
+  const displayTitle = t('home.marketReview');
   const structuredContent = useMemo(
-    () => stripTopHeading(content, displayTitle),
-    [content, displayTitle],
+    () => stripTopHeading(content, originalTitle),
+    [content, originalTitle],
   );
   const sections = useMemo(
     () => {
       const payloadSections = getPayloadSections(marketReviewPayload);
-      return payloadSections.length > 0 ? payloadSections : splitMarketReviewSections(structuredContent);
+      return payloadSections.length > 0 ? payloadSections : splitMarketReviewSections(structuredContent, normalizedReportLanguage);
     },
-    [marketReviewPayload, structuredContent],
+    [marketReviewPayload, normalizedReportLanguage, structuredContent],
   );
   const structuredMarketData = useMemo(
     () => getStructuredMarketData(marketReviewPayload),
@@ -478,7 +482,7 @@ export const MarketReviewReportView: React.FC<MarketReviewReportViewProps> = ({
           <div className="min-w-0">
             <div className="mb-2 inline-flex items-center gap-2 text-xs font-semibold text-secondary-text">
               <BarChart3 className="h-4 w-4" aria-hidden="true" />
-              <span>MARKET REVIEW</span>
+              <span>{t('home.marketReview')}</span>
             </div>
             <h2 className="text-[26px] font-bold leading-tight text-foreground sm:text-[30px]">
               {displayTitle}
@@ -495,7 +499,7 @@ export const MarketReviewReportView: React.FC<MarketReviewReportViewProps> = ({
             <ShareImageButton
               recordId={recordId}
               reportTitle={displayTitle}
-              reportLanguage={reportLanguage}
+              reportLanguage={uiLanguage}
             />
             {canOpenRunFlow ? (
               <Tooltip content={runFlowText['runFlow.open']}>
@@ -552,6 +556,8 @@ export const MarketReviewReportView: React.FC<MarketReviewReportViewProps> = ({
           </div>
         </div>
       </Card>
+
+      <OriginalReportDisclosure sourceLanguage={normalizedReportLanguage}>
 
       {summary ? (
         <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-4">
@@ -742,6 +748,7 @@ export const MarketReviewReportView: React.FC<MarketReviewReportViewProps> = ({
           ))}
         </div>
       )}
+      </OriginalReportDisclosure>
     </div>
   );
 };

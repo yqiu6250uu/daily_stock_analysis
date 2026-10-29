@@ -188,6 +188,7 @@ function getSetupCheckStatusLabel(
 }
 
 type FirstRunSetupCardProps = {
+  language: UiLanguage;
   status: SetupStatusResponse | null;
   isLoading: boolean;
   error: ParsedApiError | null;
@@ -205,6 +206,7 @@ type FirstRunSetupCardProps = {
 };
 
 const FirstRunSetupCard: React.FC<FirstRunSetupCardProps> = ({
+  language,
   status,
   isLoading,
   error,
@@ -221,6 +223,16 @@ const FirstRunSetupCard: React.FC<FirstRunSetupCardProps> = ({
   t,
 }) => {
   const [isHidden, setIsHidden] = useState(false);
+  const titleKeys: Record<string, UiTextKey> = {
+    llm_primary: 'home.setupCheck.llmPrimary', llm_agent: 'home.setupCheck.llmAgent',
+    stock_list: 'home.setupCheck.stockList', notification: 'settings.setupCheck.notification',
+    storage: 'settings.setupCheck.storage',
+  };
+  const checkTitle = (check: SetupStatusCheck) => language === 'en'
+    ? t(titleKeys[check.key] ?? 'home.setupCheck.other') : check.title;
+  const checkMessage = (check: SetupStatusCheck) => language === 'en'
+    ? t(`settings.setupCheck.${check.status === 'needs_action' ? 'needsAction' : check.status}Message` as UiTextKey)
+    : check.message;
   const requiredMissing = status?.checks.filter((check) => check.required && check.status === 'needs_action') || [];
   const isComplete = Boolean(status?.isComplete);
   const canRunSmoke = Boolean(status?.readyForSmoke && firstStockCode);
@@ -238,7 +250,7 @@ const FirstRunSetupCard: React.FC<FirstRunSetupCardProps> = ({
     : requiredMissing.length
       ? t('settings.setupGuideMissingSummary', {
         count: requiredMissing.length,
-        labels: requiredMissing.slice(0, 3).map((check) => check.title).join(listSeparator),
+        labels: requiredMissing.slice(0, 3).map(checkTitle).join(listSeparator),
       })
       : t('settings.setupGuideReadySummary');
 
@@ -309,15 +321,14 @@ const FirstRunSetupCard: React.FC<FirstRunSetupCardProps> = ({
                   {getSetupCheckIcon(check)}
                   <div className="min-w-0">
                     <div className="flex flex-wrap items-center gap-2">
-                      <p className="text-sm font-semibold text-foreground">{check.title}</p>
+                      <p className="text-sm font-semibold text-foreground">{checkTitle(check)}</p>
                       <span className="rounded-full border settings-border bg-background/60 px-2 py-0.5 text-[11px] font-medium text-muted-text">
                         {getSetupCheckStatusLabel(check, t)}
                       </span>
                     </div>
-                    <p className="mt-1 text-xs leading-5 text-muted-text">{check.message}</p>
-                    {check.nextStep ? (
-                      <p className="mt-2 text-xs leading-5 text-secondary-text">{check.nextStep}</p>
-                    ) : null}
+                    <p className="mt-1 text-xs leading-5 text-muted-text">{checkMessage(check)}</p>
+                    {language === 'zh' && check.nextStep ? <p className="mt-2 text-xs leading-5 text-secondary-text">{check.nextStep}</p> : null}
+                    {language === 'en' && (check.message || check.nextStep) ? <details className="mt-2 text-xs text-secondary-text"><summary>{t('settings.setupCheck.detail')}</summary><div lang="zh-CN" className="mt-1 space-y-1"><p>{check.message}</p>{check.nextStep && <p>{check.nextStep}</p>}</div></details> : null}
                   </div>
                 </div>
               </div>
@@ -1191,6 +1202,7 @@ const SettingsPage: React.FC = () => {
         notify: false,
         originalQuery: firstSetupStockCode,
         selectionSource: 'manual',
+        reportLanguage: uiLanguage,
       });
       const taskId = 'taskId' in result ? result.taskId : result.accepted?.[0]?.taskId;
       setSetupSmokeSuccess(
@@ -1352,6 +1364,7 @@ const SettingsPage: React.FC = () => {
           <section className="space-y-4">
             {shouldShowFirstRunSetup ? (
               <FirstRunSetupCard
+                language={uiLanguage}
                 status={setupStatus}
                 isLoading={isRefreshingSetupStatus}
                 error={setupStatusError}

@@ -754,8 +754,11 @@ describe('DecisionSignalsPage', () => {
   });
 
   it('reports an expired signal refresh separately and refreshes active views', async () => {
+    // The timeline defaults to 90 days; keep this fixture inside that window.
+    const recentCreatedAt = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
     const refreshedItem = makeSignal({
       id: 90,
+      createdAt: recentCreatedAt,
       decisionProfile: 'balanced',
       sourceAgent: null,
       triggerSource: 'api',

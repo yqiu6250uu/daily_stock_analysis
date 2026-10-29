@@ -1,5 +1,7 @@
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { UiLanguageProvider } from '../../contexts/UiLanguageContext';
+import { UI_LANGUAGE_STORAGE_KEY } from '../../utils/uiLanguage';
 import AlertsPage from '../AlertsPage';
 
 const {
@@ -73,6 +75,7 @@ function createDeferred<T>() {
 
 beforeEach(() => {
   vi.clearAllMocks();
+  window.localStorage.removeItem(UI_LANGUAGE_STORAGE_KEY);
   listRules.mockResolvedValue({ items: [rule], total: 1, page: 1, pageSize: 20 });
   listTriggers.mockResolvedValue({
     items: [
@@ -108,6 +111,16 @@ beforeEach(() => {
 });
 
 describe('AlertsPage', () => {
+  it('renders standard alert controls and empty states in English', async () => {
+    window.localStorage.setItem(UI_LANGUAGE_STORAGE_KEY, 'en');
+    render(<UiLanguageProvider><AlertsPage /></UiLanguageProvider>);
+    expect(await screen.findByRole('heading', { name: 'Alert center' })).toBeInTheDocument();
+    expect(await screen.findByText('No notification attempts')).toBeInTheDocument();
+    expect(screen.getByText('Trigger history')).toBeInTheDocument();
+    expect(screen.getByText('Evaluation records')).toBeInTheDocument();
+    expect(screen.queryByText('通知尝试记录')).not.toBeInTheDocument();
+    expect(document.title).toBe('Alert center · EquityLens');
+  });
   it('discloses environment rules even when the database rule list is empty', async () => {
     listRules.mockResolvedValue({
       items: [], total: 0, page: 1, pageSize: 20,
