@@ -1,6 +1,6 @@
 # EquityLens v0.2 — research workspace release candidate
 
-Status: **local release candidate under verification**. The public `https://equitylens-portfolio-v01.pages.dev/` remains the original NVDA-only v0.1 production deployment until separate production approval. This document describes the local source and static preview build; it does not claim that v0.2 is publicly live.
+Status: **locally verified release candidate awaiting publication approval**. The public `https://equitylens-portfolio-v01.pages.dev/` remains the original NVDA-only v0.1 production deployment until separate production approval. This document describes the local source and static preview build; it does not claim that v0.2 is publicly live.
 
 ## Implemented scope and journey
 

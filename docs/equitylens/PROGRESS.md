@@ -6,6 +6,7 @@
 - Python 新增版本化报告合同、可比年度/同季度选择、Decimal 变化/增长/利润率计算、明确不足原因和来源链接；无需 LLM。可选 AI 解释接口默认关闭，仅有 mock/合同验证，无真实模型质量结论。
 - 三家发行人的最新两个年度及两个季度样本，共 30 项 reported 和 6 项 derived quarter 值，按官方 SEC CompanyFacts 的 XBRL 概念、单位、期间、form、accession 和金额对照；MSFT/AMAT 最新 10-K/10-Q 原始文件另获 HTTP 200。AMD 因修订年度锚点缺失可靠财年标签而未纳入。详细边界、数据流和工具可用性见 [v0.2 候选说明](V0_2_RELEASE_CANDIDATE.md)。
 - 最终全套构建/浏览器/安全回归及本地发布审查见 [测试结果](TEST_RESULTS.md)。未推送、部署或修改主分支。以下内容保留历史审计记录。
+- 用户授权的 **71 文件**本地候选提交 `bf4a5a407dc259702cca15fe6dbd0c8377e524fe` 已创建，使用已有 GitHub noreply 作者身份；未推送。原先 14 份未跟踪设计草稿/原型继续保留，未纳入提交。远端功能分支与 `main` 均保持原 SHA。
 
 更新时间：2026-10-29（Asia/Shanghai）。**公开作品集网站 v0.1 已上线并完成在线验收**：[EquityLens Portfolio Demo](https://equitylens-portfolio-v01.pages.dev/)。Phase 1A.5 Step C 已实施部分本地化修复，但尚未达到全站英语完成门槛；公开演示只呈现已验证的 NVDA 研究主路径。Step B 已由用户批准；Phase 1A 的 SEC 数据层保持不变，Phase 1B 未开始。以下历史基线保留供审计，当前功能以实际代码和下述最新记录为准。
 
@@ -14,7 +15,7 @@
 - 用户批准的 91 文件发布集已拆为两次提交并推送至现有 Fork 的 `feature/equitylens-foundation`：产品与测试 `74ce2f8fc5d519109b22b6093b1fe861f9f8fa53`，文档、截图和工作流防护 `6d794c450d5fcdd6b57b08731afef89f236c7529`。远端默认 `main` 仍是 `4e6226430b76124e5f43b19201fc6338a62f5e1d`；14 个排除的设计草稿未被提交。未合并、打标签或启用 Actions。
 - Cloudflare Pages Free 项目 `equitylens-portfolio-v01` 已由用户明确批准后经 Direct Upload 上线：[公开 HTTPS 首页](https://equitylens-portfolio-v01.pages.dev/)；[NVDA 公司页](https://equitylens-portfolio-v01.pages.dev/research/NVDA)。13 个静态文件复用真实 React 研究首页/公司页，发布路由只接受 NVDA，并从有日期的只读 SEC 核验快照读取 22 个财务期间及 325 条数值来源记录；旧工具、账户、通知和 AI 后端不会出现在公开演示路由中。快照取回时间与摘要、构建和更新步骤见 [部署文档](PORTFOLIO_DEMO_DEPLOYMENT.md)。
 - 最终公开地址已通过 Playwright 3/3、1440/1024/768/390px 浏览器检查、英文/中文与亮/暗四组合、深链接刷新、收入/现金流比较、原始证据、无整页溢出/私有 API 请求/页面错误；线上快照 SHA-256 与本机导出一致。完整旧 Vitest 最终重跑 **1390 通过、2 跳过、0 失败**；旧 Playwright 夹具 35/35、SEC/API Python 16/16、TypeScript 和普通/演示构建通过。准确命令与限制见 [测试结果](TEST_RESULTS.md)。
-- 为避免暗示实时更新，演示版公司页移除了原“刷新”按钮；本机完整应用保留原按钮与 API 行为。网站源代码与最新部署文档仍是本机未提交改动，早先 91 文件 GitHub 功能分支提交不包含这次静态演示。`demo-dist/` 的 13 文件已扫描，未发现邮箱、私钥、用户路径或个人配置；未连接 GitHub 自动构建、未公开本机 FastAPI。
+- 为避免暗示实时更新，演示版公司页移除了原“刷新”按钮；本机完整应用保留原按钮与 API 行为。网站源代码当时仍是未提交改动，现已随 v0.2 本地候选提交纳入，但尚未推送。`demo-dist/` 的 v0.1 13 文件当时已扫描，未发现邮箱、私钥、用户路径或个人配置；未连接 GitHub 自动构建、未公开本机 FastAPI。
 
 ## 求职作品集 v0.1 发布前检查记录（历史状态）
 

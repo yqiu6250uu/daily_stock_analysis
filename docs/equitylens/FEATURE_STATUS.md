@@ -15,7 +15,7 @@
 
 See [v0.2 release candidate](V0_2_RELEASE_CANDIDATE.md) and [final checks](TEST_RESULTS.md). This bounded issuer validation is not a universal SEC accuracy claim.
 
-Checked against the local `feature/equitylens-foundation` working tree and the [public static demo](https://equitylens-portfolio-v01.pages.dev/) on 2026-10-29. The demo source changes are still **uncommitted**; the earlier GitHub feature branch contains the core SEC workspace but not the static deployment adapter. “Tested” names the demonstrated scope; it does not mean every issuer or inherited route has been certified.
+The v0.1 rows below were checked against the local worktree and [public static demo](https://equitylens-portfolio-v01.pages.dev/) on 2026-10-29. The static source was subsequently included in the **local-only v0.2 candidate commit**; the remote feature branch still contains the earlier core SEC workspace. “Tested” names the demonstrated scope; it does not mean every issuer or inherited route has been certified.
 
 | Category | Capability | Evidence and boundary |
 | --- | --- | --- |
