@@ -107,6 +107,7 @@ test('short desktop rail keeps settings and controls reachable', async ({ page }
   await page.setViewportSize({ width: 1280, height: 720 });
   await page.goto('/data');
   const rail = page.getByRole('complementary', { name: '金融研究平台' });
+  await expect(rail.getByRole('button', { name: /市场工具/ })).toBeVisible();
   if (await rail.getByRole('link', { name: '选股', exact: true }).count() === 0) {
     await rail.getByRole('button', { name: '展开市场工具' }).click();
   }

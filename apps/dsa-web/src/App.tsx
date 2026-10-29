@@ -33,6 +33,9 @@ const TokenUsagePage = lazy(() => import('./pages/TokenUsagePage'));
 const StockScreeningPage = lazy(() => import('./pages/StockScreeningPage'));
 const DataCenterPage = lazy(() => import('./pages/DataCenterPage'));
 const CompanyResearchPage = lazy(() => import('./pages/CompanyResearchPage'));
+const ResearchToolsPage = lazy(() => import('./pages/ResearchToolsPage'));
+const RevenueCashFlowResearchPage = lazy(() => import('./pages/RevenueCashFlowResearchPage'));
+const MyResearchPage = lazy(() => import('./pages/MyResearchPage'));
 
 const AppContent: React.FC = () => {
   const location = useLocation();
@@ -101,6 +104,11 @@ const routeChildren = [
   { path: '/data', element: <DataCenterPage /> },
   { path: '/research', element: <CompanyResearchPage /> },
   { path: '/research/:ticker', element: <CompanyResearchPage /> },
+  { path: '/research/:ticker/questions/revenue-cash-flow', element: <RevenueCashFlowResearchPage /> },
+  { path: '/my-research', element: <MyResearchPage /> },
+  { path: '/tools/metrics', element: <ResearchToolsPage mode="metrics" /> },
+  { path: '/tools/compare', element: <ResearchToolsPage mode="compare" /> },
+  { path: '/tools/screener', element: <ResearchToolsPage mode="screener" /> },
   { path: '/backtest', element: <BacktestPage /> },
   { path: '/alerts', element: <AlertsPage /> },
   { path: '/usage', element: <TokenUsagePage /> },

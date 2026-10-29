@@ -1,6 +1,8 @@
 # EquityLens GitHub portfolio release checkpoint v0.1
 
-**Status:** local release candidate, 2026-10-29. Nothing has been staged, committed, pushed, merged, tagged or deployed by this checkpoint. The repository's current default-branch README is still the inherited DSA README until an explicitly approved Git action publishes these changes.
+> **v0.2 local gate (2026-10-30):** the 91-file path list below is historical and must not be reused for v0.2. The new candidate adds the v0.1 static demo source plus three-issuer snapshots, shared report contract, read-only tools, local saves, tests and five labeled local screenshots. The public v0.1 site and remote feature branch remain unchanged until separate approval. Review [v0.2 candidate](V0_2_RELEASE_CANDIDATE.md), [final tests](TEST_RESULTS.md), the actual staged diff and the six SHA-256 manifest entries before any push or production upload. Never stage `.env`, local SEC cache, databases, logs, `demo-dist/` or the 14 excluded design drafts.
+
+**Status update, 2026-10-29:** This checklist records the historical approval gate for the exact 91-file release set below. That set was subsequently committed in `74ce2f8fc5d519109b22b6093b1fe861f9f8fa53` and `6d794c450d5fcdd6b57b08731afef89f236c7529` and pushed to `feature/equitylens-foundation` only. A separate [Cloudflare Pages static NVDA demo](https://equitylens-portfolio-v01.pages.dev/) is now live after its own user approval; its source and updated documentation remain local and uncommitted. The default `main` README is still inherited DSA until a separately approved branch transition. The historical staging instructions below are retained for audit and must not be rerun blindly.
 
 ## Release claims and evidence
 

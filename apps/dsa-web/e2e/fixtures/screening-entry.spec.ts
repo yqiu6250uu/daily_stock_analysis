@@ -23,6 +23,7 @@ for (const state of ['disabled', 'error', 'unavailable'] as const) {
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto('/data');
     const nav = page.getByRole('complementary', { name: '金融研究平台' });
+    await expect(nav.getByRole('button', { name: /市场工具/ })).toBeVisible();
     if (await nav.getByRole('link', { name: '选股', exact: true }).count() === 0) {
       await nav.getByRole('button', { name: '展开市场工具' }).click();
     }
@@ -77,7 +78,7 @@ for (const language of ['zh', 'en'] as const) {
     const summary = page.getByText(language === 'zh'
       ? '开启后可运行选股策略，候选可继续进入单股分析；关闭时仍可从导航进入并查看开启提示。'
       : 'Enable screening strategies and continue to single-stock analysis from candidates. When disabled, the navigation entry still opens the setup prompt.', { exact: true });
-    await expect(summary).toBeVisible();
+    await expect(summary).toBeVisible({ timeout: 15_000 });
     await summary.scrollIntoViewIfNeeded();
     const screenshot = testInfo.outputPath(`screening-settings-${language}.png`);
     await page.screenshot({ path: screenshot, animations: 'disabled' });

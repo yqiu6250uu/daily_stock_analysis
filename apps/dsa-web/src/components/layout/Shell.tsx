@@ -10,6 +10,7 @@ import { ThemeToggle } from '../theme/ThemeToggle';
 import { UiLanguageToggle } from '../i18n/UiLanguageToggle';
 import { useUiLanguage } from '../../contexts/UiLanguageContext';
 import { equitylensText } from '../../i18n/equitylensText';
+import { IS_STATIC_DEMO } from '../../demo/config';
 import './equitylens.css';
 
 type ShellProps = { children?: React.ReactNode };
@@ -42,7 +43,8 @@ export const Shell: React.FC<ShellProps> = ({ children }) => {
         </button>
       </aside>
       <div className="el-workspace">
-        <div className="el-desktop-update"><DesktopUpdateIndicator /></div>
+        {!IS_STATIC_DEMO && <div className="el-desktop-update"><DesktopUpdateIndicator /></div>}
+        {IS_STATIC_DEMO && <div className="el-demo-banner" role="note"><strong>{copy.demoLabel}</strong><span>{copy.demoBanner}</span></div>}
         <main id="main-content" className="el-workspace-main">{children ?? <Outlet />}</main>
       </div>
       <Drawer isOpen={mobileOpen} onClose={() => setMobileOpen(false)} width="max-w-xs" zIndex={90} side="left">

@@ -4,6 +4,8 @@ import { ArrowRight, ArrowUpRight, Landmark, Search } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { secFinancialsApi } from '../api/secFinancials';
+import { IS_STATIC_DEMO, isVerifiedDemoTicker } from '../demo/config';
+import { researchV02Text } from '../i18n/researchV02Text';
 import { useUiLanguage } from '../contexts/UiLanguageContext';
 import { equitylensText } from '../i18n/equitylensText';
 import type { FinancialPeriod, FinancialValue, SecFinancialResponse } from '../types/secFinancials';
@@ -40,6 +42,7 @@ function compactValue(value: FinancialValue | null | undefined, language: 'en' |
 const ResearchHomePage: React.FC = () => {
   const { language } = useUiLanguage();
   const copy = equitylensText[language];
+  const v02 = researchV02Text[language];
   const navigate = useNavigate();
   const [query, setQuery] = useState('');
   const [focused, setFocused] = useState(false);
@@ -84,6 +87,7 @@ const ResearchHomePage: React.FC = () => {
     const ticker = query.trim().toUpperCase();
     if (!ticker) { setSearchError(copy.searchEmpty); return; }
     if (!/^[A-Z][A-Z0-9.-]{0,9}$/.test(ticker)) { setSearchError(copy.searchInvalid); return; }
+    if (IS_STATIC_DEMO && !isVerifiedDemoTicker(ticker)) { setSearchError(copy.demoUnsupported); return; }
     navigate(`/research/${encodeURIComponent(ticker)}`);
   }
 
@@ -117,7 +121,7 @@ const ResearchHomePage: React.FC = () => {
             </div>
             <button type="submit" className="el-search-submit"><span>{copy.searchButton}</span><ArrowRight aria-hidden="true" /></button>
           </div>
-          {searchError ? <p id="el-search-error" role="alert" className="el-search-error">{searchError}</p> : <p id="el-search-hint" className="el-search-hint">{copy.searchHint}</p>}
+          {searchError ? <p id="el-search-error" role="alert" className="el-search-error">{searchError}</p> : <p id="el-search-hint" className="el-search-hint">{IS_STATIC_DEMO ? copy.demoSearchHint : copy.searchHint}</p>}
         </form>
       </section>
 
@@ -176,7 +180,10 @@ const ResearchHomePage: React.FC = () => {
         <footer className="el-feature-foot"><span>{data ? `${copy.retrieved} ${data.retrieved_at}` : copy.dataLoading}</span><span className="el-feature-actions">{latest && <Link to="/research/NVDA#cash-flow">{copy.compareCashFlow}<ArrowRight aria-hidden="true" /></Link>}<Link to="/research/NVDA">{copy.goToCompany}<ArrowRight aria-hidden="true" /></Link></span></footer>
       </section>
 
-      <section className="el-home-bottom"><div className="el-home-bottom-intro"><p className="el-eyebrow">{copy.toolsEyebrow}</p><h2>{copy.toolsTitle}</h2><p>{copy.toolsBody}</p></div><Link to="/tools" className="el-tools-link"><Landmark aria-hidden="true" /><span>{copy.toolsAction}</span><ArrowUpRight aria-hidden="true" /></Link></section>
+      <section className="el-v02-home-universe" aria-labelledby="v02-home-universe"><div><p className="el-eyebrow">SEC EDGAR / {v02.publicReady}</p><h2 id="v02-home-universe">{v02.verifiedCompanies}</h2><p>{v02.toolsScope}</p></div>
+        <div>{(['NVDA', 'MSFT', 'AMAT'] as const).map((ticker) => <Link key={ticker} to={`/research/${ticker}`}><strong>{ticker}</strong><span>{ticker === 'NVDA' ? 'NVIDIA' : ticker === 'MSFT' ? 'Microsoft' : 'Applied Materials'}</span><ArrowUpRight aria-hidden="true" /></Link>)}</div>
+      </section>
+      <section className="el-home-bottom"><div className="el-home-bottom-intro"><p className="el-eyebrow">{copy.toolsEyebrow}</p><h2>{copy.toolsTitle}</h2><p>{IS_STATIC_DEMO ? v02.toolsIntro : copy.toolsBody}</p></div><Link to="/tools" className="el-tools-link"><Landmark aria-hidden="true" /><span>{copy.toolsAction}</span><ArrowUpRight aria-hidden="true" /></Link></section>
     </div>
   );
 };

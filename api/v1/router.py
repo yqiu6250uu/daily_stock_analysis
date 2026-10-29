@@ -25,6 +25,7 @@ from api.v1.endpoints import (
     history,
     intelligence,
     portfolio,
+    research_questions,
     stocks,
     system_config,
     usage,
@@ -116,6 +117,12 @@ router.include_router(
     financials.router,
     prefix="/financials",
     tags=["Financials"]
+)
+
+router.include_router(
+    research_questions.router,
+    prefix="/research",
+    tags=["Research"]
 )
 
 router.include_router(

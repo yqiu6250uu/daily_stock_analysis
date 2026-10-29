@@ -2,11 +2,15 @@
 
 **Evidence-based company financial research, built on [daily_stock_analysis](https://github.com/ZhuLinsen/daily_stock_analysis).**
 
-EquityLens helps a reader move from a public-company ticker to reported financial statements, historical trends, a focused revenue-versus-cash-flow comparison, and the original SEC filing behind each important number. The current release candidate is a **local, research-first portfolio project**. It uses deterministic calculations and source-linked disclosures; it does **not** generate an AI investment conclusion or make trading recommendations.
+EquityLens helps a reader move from a public-company ticker to reported financial statements, historical trends, a focused revenue-versus-cash-flow comparison, and the original SEC filing behind each important number. A [public, read-only portfolio demo](https://equitylens-portfolio-v01.pages.dev/) now shows the verified NVIDIA workflow with a dated SEC snapshot; the full FastAPI application remains local. It uses deterministic calculations and source-linked disclosures; it does **not** generate an AI investment conclusion or make trading recommendations.
 
-The first verified example is **NVIDIA (NVDA)**. A company ticker search can request other SEC-listed issuers, but issuer-specific accuracy has only been checked in depth for NVDA. The SEC workflow works without an LLM key or account.
+**Development status:** the live website is the stable **v0.1 NVIDIA-only** demo. A local **v0.2 release candidate** adds verified MSFT and AMAT snapshots, a structured revenue/cash-flow investigation, a three-company read-only tools workspace, and browser-local saved research. These additions are **not yet deployed**. See the [v0.2 release candidate](docs/equitylens/V0_2_RELEASE_CANDIDATE.md) for precise scope and verification.
+
+The live verified example is **NVIDIA (NVDA)**. The local v0.2 candidate also includes bounded, issuer-specific verification for **Microsoft (MSFT)** and **Applied Materials (AMAT)**; that sample does not certify every historical value or all SEC-listed issuers. The SEC workflow works without an LLM key or account.
 
 ## See the working application
+
+**Live portfolio demo:** [equitylens-portfolio-v01.pages.dev](https://equitylens-portfolio-v01.pages.dev/) · [NVIDIA research](https://equitylens-portfolio-v01.pages.dev/research/NVDA). The public site supports **NVDA only**, uses the SEC response retrieved on **2026-10-29**, and does not provide live financial updates or the inherited backend tools. [Deployment and snapshot details](docs/equitylens/PORTFOLIO_DEMO_DEPLOYMENT.md).
 
 These screenshots were captured from the actual locally running React/FastAPI application on **2026-10-29**. They show SEC-backed NVDA data, not a design prototype or synthetic browser fixture. The displayed retrieval time belongs to the cached SEC response.
 
@@ -38,7 +42,7 @@ flowchart LR
     UI --> FILING[Original SEC filing links]
 ```
 
-The adapter requires a valid `SEC_CONTACT_EMAIL` before making SEC requests. It uses bounded retries, timeouts, conservative process-level pacing, and a local cache. Normalization keeps period dates, form, accession, concept, unit, filing and retrieval dates, and source URLs. Same-context conflicts and incompatible/missing data are surfaced rather than filled with estimates. Calculated values retain their definitions and input sources. The local cache is not a cross-instance rate limiter or a public deployment architecture.
+The adapter requires a valid `SEC_CONTACT_EMAIL` before making SEC requests. It uses bounded retries, timeouts, conservative process-level pacing, and a local cache. Normalization keeps period dates, form, accession, concept, unit, filing and retrieval dates, and source URLs. Same-context conflicts and incompatible/missing data are surfaced rather than filled with estimates. Calculated values retain their definitions and input sources. The local cache is not a cross-instance rate limiter or a public backend architecture; the public demo serves a precomputed static JSON snapshot instead.
 
 ## Run locally
 
@@ -79,4 +83,4 @@ Playwright fixtures use **synthetic intercepted API data** to test interactions;
 
 EquityLens extends the MIT-licensed [ZhuLinsen/daily_stock_analysis](https://github.com/ZhuLinsen/daily_stock_analysis) project. The original Python/FastAPI/React application, legacy analysis routes, data providers, reporting, and notification features are inherited. The SEC adapter, financial normalization/API, evidence-centered research views, focused comparison, branding, and related tests/documentation are EquityLens additions or substantial adaptations. The original copyright and MIT [LICENSE](LICENSE) are retained. The [upstream documentation](docs/README_EN.md) describes inherited DSA capabilities and may not describe EquityLens's current behavior.
 
-**Next, not yet shipped:** a complete research question engine, optional AI explanations with verified citations, research history/Follow, cross-issuer validation, and a safe public demo. No live EquityLens service or paid infrastructure is deployed. See [feature status](docs/equitylens/FEATURE_STATUS.md) and [release checklist](docs/equitylens/RELEASE_CHECKLIST.md).
+**Next on the public site:** the v0.2 candidate awaits release approval; live AI explanations, automatic Follow updates, a public backend and broad issuer coverage remain unavailable. The public site is static and does not expose the FastAPI service or use paid infrastructure. See [feature status](docs/equitylens/FEATURE_STATUS.md), [deployment notes](docs/equitylens/PORTFOLIO_DEMO_DEPLOYMENT.md), and [release checklist](docs/equitylens/RELEASE_CHECKLIST.md).

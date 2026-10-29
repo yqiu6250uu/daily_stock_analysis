@@ -4,6 +4,10 @@ import { ArrowDown, ArrowRight, ArrowUpRight, FileSearch, RefreshCw, Search } fr
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { secFinancialsApi } from '../api/secFinancials';
+import { IS_STATIC_DEMO, isVerifiedDemoTicker } from '../demo/config';
+import { researchV02Text } from '../i18n/researchV02Text';
+import { saveResearch } from '../demo/researchStore';
+import { Link } from 'react-router-dom';
 import { AppPage, Button, EmptyState, InlineAlert } from '../components/common';
 import { useUiLanguage } from '../contexts/UiLanguageContext';
 import { equitylensText } from '../i18n/equitylensText';
@@ -68,7 +72,7 @@ function comparableFacts(current: FinancialValue | null | undefined, prior: Fina
     [...currentConcepts][0] === [...priorConcepts][0];
 }
 
-function Evidence({ value }: { value: FinancialValue | null | undefined }) {
+export function Evidence({ value }: { value: FinancialValue | null | undefined }) {
   const { t } = useUiLanguage();
   if (!value) return null;
   const definition = value.definition && (DEFINITION_KEYS[value.definition] ? t(DEFINITION_KEYS[value.definition]) : value.definition);
@@ -98,21 +102,24 @@ function Fact({ field, value, language }: { field: typeof FIELDS[number]; value:
 const CompanyResearchContent: React.FC<{ ticker: string }> = ({ ticker }) => {
   const { t, language } = useUiLanguage();
   const copy = equitylensText[language];
+  const v02 = researchV02Text[language];
   const navigate = useNavigate();
   const location = useLocation();
+  const savedContext = new URLSearchParams(location.search);
   const comparisonRef = useRef<HTMLElement>(null);
   const comparisonHeadingRef = useRef<HTMLHeadingElement>(null);
   const requestGeneration = useRef(0);
   const [search, setSearch] = useState(ticker);
   const [searchError, setSearchError] = useState('');
-  const [periodType, setPeriodType] = useState<'annual' | 'quarterly'>('annual');
-  const [selectedEnd, setSelectedEnd] = useState<string | null>(null);
+  const [periodType, setPeriodType] = useState<'annual' | 'quarterly'>(() => savedContext.get('basis') === 'quarterly' ? 'quarterly' : 'annual');
+  const [selectedEnd, setSelectedEnd] = useState<string | null>(() => savedContext.get('period'));
   const [chartMetric, setChartMetric] = useState<ChartMetric>(location.hash === '#cash-flow' ? 'operating_cash_flow' : 'revenue');
   const [comparisonOpen, setComparisonOpen] = useState(location.hash === '#cash-flow');
   const showComparison = comparisonOpen || location.hash === '#cash-flow';
   const [data, setData] = useState<SecFinancialResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [errorCode, setErrorCode] = useState('');
+  const [saveStatus, setSaveStatus] = useState<'none' | 'saved' | 'error'>('none');
 
   useEffect(() => { document.title = `${ticker} · EquityLens`; }, [ticker]);
 
@@ -171,6 +178,7 @@ const CompanyResearchContent: React.FC<{ ticker: string }> = ({ ticker }) => {
         const next = search.trim().toUpperCase();
         if (!next) { setSearchError(copy.searchEmpty); return; }
         if (!/^[A-Z][A-Z0-9.-]{0,9}$/.test(next)) { setSearchError(copy.searchInvalid); return; }
+        if (IS_STATIC_DEMO && !isVerifiedDemoTicker(next)) { setSearchError(copy.demoUnsupported); return; }
         setSearchError('');
         navigate(`/research/${encodeURIComponent(next)}`);
       }} noValidate>
@@ -178,19 +186,20 @@ const CompanyResearchContent: React.FC<{ ticker: string }> = ({ ticker }) => {
         <div><input id="el-company-ticker" value={search} onChange={(event) => { setSearch(event.target.value); setSearchError(''); }} placeholder="NVDA" autoComplete="off" spellCheck={false} aria-invalid={Boolean(searchError)} aria-describedby={searchError ? 'el-company-search-error' : undefined} />
           <Button type="submit" size="sm" variant="secondary"><Search aria-hidden="true" />{t('research.search')}</Button></div>
         {searchError && <p id="el-company-search-error" role="alert" className="el-research-form-error">{searchError}</p>}
+        {IS_STATIC_DEMO && !searchError && <p className="el-research-form-hint">{copy.demoSearchHint}</p>}
       </form>
     </header>
 
     {loading && !data && <div className="el-research-loading" role="status" aria-label={t('research.loading')}><span /><span /><span /></div>}
-    {errorCode && <InlineAlert variant="warning" title={t(errorCode === 'sec_not_configured' ? 'research.setupTitle' : 'research.errorTitle')}
-      message={t(errorCode === 'sec_not_configured' ? 'research.setupMessage' : errorCode === 'ticker_not_found' ? 'research.notFound' : 'research.errorMessage')}
+    {errorCode && <InlineAlert variant="warning" title={t(errorCode === 'demo_unsupported' ? 'research.demoUnsupportedTitle' : errorCode === 'sec_not_configured' ? 'research.setupTitle' : 'research.errorTitle')}
+      message={t(errorCode === 'demo_unsupported' ? 'research.demoUnsupported' : errorCode === 'sec_not_configured' ? 'research.setupMessage' : errorCode === 'ticker_not_found' ? 'research.notFound' : 'research.errorMessage')}
       action={<Button size="sm" variant="secondary" onClick={() => void load()}>{t('common.retry')}</Button>} />}
 
     {data && <>
       <section className="el-research-company" aria-label={t('research.companyContext')}>
         <div className="el-research-company-main"><p className="el-eyebrow">{t('research.companyContext')}</p><h2>{data.company_name} <span>{data.ticker}</span></h2>
           <p>CIK {String(data.cik).padStart(10, '0')} <span aria-hidden="true">·</span> {data.data_quality.source}</p></div>
-        <div className="el-research-company-meta"><span>{t('research.retrieved')} {readableTime(data.retrieved_at, language)}</span><Button type="button" size="sm" variant="secondary" onClick={() => void load()} disabled={loading}><RefreshCw aria-hidden="true" />{t('research.refresh')}</Button></div>
+        <div className="el-research-company-meta"><span>{t('research.retrieved')} {readableTime(data.retrieved_at, language)}</span>{!IS_STATIC_DEMO && <Button type="button" size="sm" variant="secondary" onClick={() => void load()} disabled={loading}><RefreshCw aria-hidden="true" />{t('research.refresh')}</Button>}</div>
       </section>
 
       <div className="el-research-periodbar">
@@ -233,8 +242,16 @@ const CompanyResearchContent: React.FC<{ ticker: string }> = ({ ticker }) => {
 
         <section className="el-research-question" aria-labelledby="el-research-question-title">
           <div><p className="el-eyebrow">03 / {t('research.questionEyebrow')}</p><h3 id="el-research-question-title">{t('research.cashFlowQuestion')}</h3><p>{t('research.questionDescription')}</p></div>
-          <button type="button" onClick={openComparison}>{t('research.compareAction')} <ArrowRight aria-hidden="true" /></button>
+          <div className="el-v02-question-actions"><button type="button" onClick={openComparison}>{t('research.compareAction')} <ArrowRight aria-hidden="true" /></button>
+            <Link to={`/research/${ticker}/questions/revenue-cash-flow?basis=${periodType}&period=${selected.period_end}`}>{v02.investigate}<ArrowUpRight aria-hidden="true" /></Link></div>
         </section>
+
+        <div className="el-v02-company-save"><button type="button" onClick={() => {
+          try { saveResearch({ kind: 'company', ticker, question_id: null, basis: periodType,
+            period_end: selected.period_end, fact_hash: null, retrieved_at: data.retrieved_at }); setSaveStatus('saved'); }
+          catch { setSaveStatus('error'); }
+        }}>{v02.saveCompany}</button><Link to="/my-research">{v02.myResearch}</Link>
+          {saveStatus !== 'none' && <span role="status">{saveStatus === 'saved' ? v02.saved : v02.saveError}</span>}</div>
 
         {showComparison && <section id="cash-flow" ref={comparisonRef} className="el-research-section el-research-comparison" aria-labelledby="el-cash-flow-title">
           <div className="el-research-section-head"><div><p className="el-eyebrow">04 / {t('research.investigationEyebrow')}</p><h3 id="el-cash-flow-title" ref={comparisonHeadingRef} tabIndex={-1}>{t('research.comparisonTitle')}</h3></div><p>{t('research.comparisonCaution')}</p></div>

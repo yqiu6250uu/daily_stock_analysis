@@ -9,6 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+- [新功能] 本地 v0.2 候选版加入 MSFT、AMAT 经 SEC 核验快照、版本化收入与经营现金流研究报告、三家公司只读指标探索/对比/筛选及浏览器本机保存；公开 v0.1 尚未更新。
+- [改进] 研究问题按可比年度或同财季比较，Decimal 计算标明公式、输入来源和证据；缺数、非正基数或口径不一致时明确留空。
+- [测试] 新增多发行人官方 CompanyFacts 抽样对照、快照哈希与重建、报告和保存回归；最终测试结果记录于 `docs/equitylens/TEST_RESULTS.md`。
+- [文档] 新增 v0.2 架构、数据边界、工具可用性及 Direct Upload 预览/生产审批流程。
+- [新功能] EquityLens 作品集演示已在 Cloudflare Pages Free 的 `https://equitylens-portfolio-v01.pages.dev/` 上线，复用现有研究页的独立静态构建、单一 NVDA SEC 核验快照和仅支持实际数据的搜索；演示公司页不显示会误导访客的实时刷新按钮。
+- [测试] 新增静态快照适配器和浏览器路径检查，覆盖财务对比、SEC 证据、双语移动深色主题、旧工具不可用提示及无私有后端请求。
+- [文档] 新增静态演示的导出、构建、Cloudflare Pages Direct Upload、在线验收与回滚步骤。
 - [文档] 将仓库首页改为 EquityLens 作品集入口，新增真实应用截图、功能状态、局限、案例研究与发布审核清单，明确原项目 MIT 署名和未实现能力。
 - [chore] 为继承的定时分析、网络 smoke 与过期 Issue 工作流加入仅上游仓库运行的 job guard；本地准备，不启用 Fork 工作流。
 

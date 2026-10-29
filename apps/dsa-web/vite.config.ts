@@ -212,7 +212,7 @@ const getVendorChunkName = (id: string): string | undefined => {
 }
 
 // https://vite.dev/config/
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
   define: {
     __APP_PACKAGE_VERSION__: JSON.stringify(appVersion),
     __APP_REVISION__: JSON.stringify(appRevision),
@@ -227,6 +227,7 @@ export default defineConfig({
       },
     }),
   ],
+  publicDir: mode === 'demo' ? path.resolve(frontendDir, 'public-demo') : path.resolve(frontendDir, 'public'),
   server: {
     host: '0.0.0.0',  // 允许公网访问
     port: 5173,       // 默认端口
@@ -247,4 +248,4 @@ export default defineConfig({
       },
     },
   },
-})
+}))

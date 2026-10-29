@@ -1,5 +1,63 @@
 # EquityLens 分阶段实测结果
 
+## v0.2 最终本地候选版回归（2026-10-30）
+
+以下结果对应最终代码、重新导出的 v0.2 快照与构建；**不是**公开 Cloudflare v0.1 的测试结果。浏览器测试使用系统 Chrome。公开站只重新确认 v0.1 未改变，尚无 v0.2 预览或生产上传。
+
+| 实际执行 | 精确结果 | 证明范围与限制 |
+| --- | --- | --- |
+| Web `tsc -b`；`vite build`；`vite build --mode demo --outDir ../../demo-dist` | 全部通过；普通构建 7.47 秒、最终演示构建 3.53 秒 | 类型和静态产物；最终演示包 20 文件、3,084,070 bytes。 |
+| Web `vitest run --maxWorkers=1` | **113 文件通过；1394 passed、2 skipped、0 failed** | 现有前端单元回归加 v0.2 快照适配器/研究保存/报告 API 测试；2 项原有跳过。 |
+| Web `playwright test --config playwright.demo.config.ts --workers=1` | **5/5 passed** | 真正构建出的本机静态 React：三家公司搜索、MSFT 报告与历史期间、SEC 来源、保存/重开/删除/导出、公司财季恢复、工具折叠/键盘/筛选、中文手机深色、旧工具禁用、无私有 API 请求。数据来自真实快照而非 mock。 |
+| Web `playwright test --config playwright.fixture.config.ts --workers=1` | **35/35 passed** | 继承路线与本地应用夹具回归；API 拦截使用合成数据，不证明真实 SEC 准确性。 |
+| Python `pytest -q tests/test_market_review.py tests/test_report_language_fallbacks_ko.py tests/test_analysis_api_contract.py tests/test_sec_financials.py tests/test_api_health.py tests/test_agent_chat_api.py tests/test_revenue_cashflow_research.py tests/test_equitylens_v02_snapshots.py` | **213 passed、10 warnings** | SEC 正规化、报告语言、API、Decimal 问题报告、快照哈希和全部来源 URL；警告主要为第三方弃用与旧测试辅助类收集。 |
+| 64 组实际静态页面浏览器检查（4 路由 × 4 宽度 × 2 语言 × 2 主题） | **64/64 无整页溢出、浏览器错误或私有后端请求** | 宽度 1440/1024/768/390px；检查首页、MSFT 公司、AMAT 研究报告和对比工具；未对全部继承旧工具做该矩阵。 |
+| 真正本地 `uvicorn server:app --host 127.0.0.1 --port 8010` + 六个 GET | 服务启动；NVDA/MSFT/AMAT 各年度和季度接口 **6/6 HTTP 200**，每份 6 个事实、8 个计算；浏览器 MSFT 报告显示 17.7887% 与 7 个 SEC 来源链接，页面错误 0 | 使用已有官方 SEC 缓存；本轮不代表对所有历史值重新联网抓取。可选 AI 未真实调用。 |
+| `scripts/export_equitylens_v02.py --input-dir /tmp/equitylens-v02-offline-input --output-dir …` | **3/3 成功**；NVDA/MSFT/AMAT 分别 22/22/21 份报告；三份源快照 SHA 与先前一致 | 对官方 ticker map 和 CompanyFacts 缓存核对最近两年及两季，共 **30 项 reported + 6 项 derived quarter**；report `calculated_at` 因重新计算而更新，manifest 同时固定六份 JSON 摘要。另独立打开 MSFT/AMAT 最新 10-K/10-Q 原文，四份均 HTTP 200。 |
+| `eslint` 定向所有新增/修改 v0.2 前端文件；全仓 `eslint .` | 定向 **0 问题**；全仓 **37 errors、1 warning** | 36 个 `react-hooks/set-state-in-effect`、1 个 `react-hooks/refs` 和 1 条筛选页 `exhaustive-deps` 警告。主要位于继承旧组件；后两类可能影响旧设置/筛选正确性，保留为已知债务，不计为研究主路径全绿 lint。 |
+| `git diff --check`、Git 忽略/许可证、静态资产/链接审查 | **通过**；`.env`、`demo-dist/`、`data/sec_cache` 均忽略；MIT `LICENSE` 未变；6 个快照/报告摘要匹配；私钥、个人路径、常见私有邮箱/密钥特征 0 命中 | 压缩 JS 内存在第三方库的 `localhost` 字符串和未调用的旧 Agent API 字符串；浏览器运行时 0 次此类请求。启发式扫描不替代托管平台扫描。 |
+| 公网 v0.1 HTTPS 首页与 `/research/NVDA`、公开快照摘要 | **HTTP 200 / 200**；SHA-256 `04cd4dc9af578e030bd6eee5e5dcff90560079f9bf4ae9eb888c6d2ab86b3583` | 当前公开网站仍是原 NVDA-only v0.1；不得把本地 v0.2 的截图与测试声称为已部署。 |
+
+本轮真实 SEC 发行人抽样范围由 `V0_2_RELEASE_CANDIDATE.md` 明确。上述 30+6 只说明所选最近期间和字段与官方缓存精确匹配；不能外推为全市场或所有历史修订的正确率。五张长期截图在 `images/v02-*-local.png`，标注为本地候选版。AI 仅通过 mock/结构验证，真实模型质量未评估。
+
+## 作品集静态网站 v0.1 线上最终验收（2026-10-29）
+
+最终公开站点：`https://equitylens-portfolio-v01.pages.dev/`，Cloudflare Pages Free Direct Upload，不连接 GitHub/后端。首次上传后发现演示公司页仍有可能暗示实时数据的“刷新”按钮；仅在静态模式隐藏，重新构建并上传同样 13 个静态文件，以下结果均针对**第二次上线后的最终版本**。
+
+| 检查 | 结果与边界 |
+| --- | --- |
+| `curl -I https://equitylens-portfolio-v01.pages.dev/` 和 `/research/NVDA` | 两条公开 HTTPS 路径均 **HTTP 200**；直接访问与刷新公司页可加载 React。 |
+| 公开 `/demo/nvda-sec-snapshot.json` SHA-256 | `04cd4dc9af578e030bd6eee5e5dcff90560079f9bf4ae9eb888c6d2ab86b3583`，与本机真实 API 原样导出的已核验快照完全一致；22 个期间、325 条数值级 SEC 来源；不代表实时更新。 |
+| `EQUITYLENS_DEMO_BASE_URL=https://equitylens-portfolio-v01.pages.dev playwright test --config playwright.demo.config.ts`，本机 Chrome | **3/3 通过，20.8s**，第二次部署后的最终测试；搜索仅支持 NVDA、年度/季度、收入与现金流对比、展开 SEC 证据、深链接刷新、中文 390px 深色、旧路由明确不可用、无私有后端请求且无“刷新”按钮。 |
+| 公开站点独立 Chrome 截图/网络检查 | 1440/1024/768/390px 四宽度无整页横向溢出，页面错误 **0**、失败请求 **0**、localhost 与 `/api/` 请求 **0**；英语/中文 × 浅色/深色 **4/4 组合**均加载 NVDA。最终线上截图在 `/tmp/equitylens-demo-live/*-final.png`（不属于 GitHub 已推送截图）。 |
+| 最终源代码 `tsc -b`、`vite build --mode demo --outDir ../../demo-dist` | **均通过**；第二次输出仍是 13 个静态文件。压缩包 `equitylens-demo-v01-upload-v2.zip` SHA-256 `36c435cca47b11b43c14943b8ba5581ae167aa4c6e9af59db10b36e8904ff4be`；构建文件无邮箱赋值、私钥标记、个人路径或本机 8000 地址。 |
+| `vitest run src/pages/__tests__/CompanyResearchPage.test.tsx src/demo/__tests__/secSnapshot.test.ts src/api/__tests__/secFinancials.test.ts` | **3 文件、10/10 通过**；在隐藏静态“刷新”按钮后执行，正常 API 公司页与快照适配器回归均未失败。 |
+| 完整旧 Vitest 最终第三次串行重跑 | **111 文件通过、1390 passed、2 skipped、0 failed**；先前两次全套时序波动记录如下，最终通过不抹去环境敏感性。静态页小修正后只改变渲染的演示模式，最终 TypeScript/浏览器重测通过；未重复执行整个 Vitest。 |
+
+本站财务数据仍是 2026-10-29 取回的固定 SEC 快照；先前 Phase 1A 的 99 项原始 CompanyFacts 抽查与原始 10-K HTTP 200 属于不同时间的核验，不宣称本次部署重新访问 SEC 或证明其他公司可用。完整旧版 ESLint 基线仍有 **37 errors、1 warning**，不在公开静态演示的研究路由上；GitHub 已推送分支尚未包含网站构建源代码，不能把线上部署当作已入库代码。
+
+补充的独立浏览器 SEC 跳转探针因直接寻找尚未展开的证据链接而超时，未计为通过。正式线上 Playwright 用例先展开证据，再验证原始来源链接指向 `https://www.sec.gov/Archives/edgar/data/`；本次没有重新验证浏览器访问 SEC 外部页面的成功率。
+
+## 作品集静态网站 v0.1 本地验收（2026-10-29，历史记录）
+
+本节记录**已推送的 GitHub 功能分支之外**的当前未提交网站改动。快照从本机真实 NVDA API 响应原样导出，取回时间 `2026-10-29T08:56:49.694214+00:00`，SHA-256 `04cd4dc9af578e030bd6eee5e5dcff90560079f9bf4ae9eb888c6d2ab86b3583`；导出器核验 22 个年度/季度期间和 325 条数值级原始 SEC 来源、CIK、日期、申报表、申报值/计算值与计算定义，拒绝邮箱及本机地址。FY2026 10-K 营收/净利润/经营现金流分别为 215,938,000,000 / 120,067,000,000 / 102,718,000,000 USD；此前原站核对范围见下文，本轮未重新逐项在线比对全部事实。
+
+| 本轮命令或检查 | 实际结果 | 边界 |
+| --- | --- | --- |
+| `scripts/export_equitylens_demo_snapshot.py --input /tmp/equitylens-nvda-api-20261029.json`；`python3 -m py_compile` | **通过**；快照摘要与初始 API 响应一致 | 没有新增 SEC 访问；快照不会自动更新。 |
+| Web `tsc -b`；`vite build`；`vite build --mode demo --outDir ../../demo-dist` | **全部通过**；普通构建 40.79s、演示构建 10.78s | 原本本地 Web 构建仍可运行；演示包仅含 13 个静态文件，约 1.4 MiB。 |
+| Web `vitest run src/demo/__tests__/secSnapshot.test.ts src/api/__tests__/secFinancials.test.ts` | **4/4 通过** | 离线、确定性适配器测试；不证明在线 SEC 可用。 |
+| Web `playwright test --config=playwright.demo.config.ts` | **3/3 通过**（最终构建后再次运行） | 本机真实静态预览，核对 NVDA 搜索、FY2026 财报、年度/季度、现金流对比、SEC 证据、深链刷新、中文手机深色主题及无 `/api/` 请求。还不是公网站点验收。 |
+| 本机静态浏览器截图与网络监测 | 英文 1440px 首页/公司/展开证据、中文 390px 深色首页/公司；页面错误 **0**、后端请求 **0**、整页横向溢出 **0** | 截图在仓库外 `/tmp/equitylens-demo-previews/`，是本地真实静态构建，不是线上截图。 |
+| `.venv/bin/python -m pytest -q tests/test_sec_financials.py tests/test_api_health.py` | **16 passed、4 warnings** | SEC 与 API 相关离线回归；无财务公式变更。 |
+| 定向 ESLint、`git diff --check`、`demo-dist/` 安全扫描与 `.env` 忽略检查 | 定向 ESLint **0 问题**；diff **通过**；13 文件中邮箱/私钥/token 样式/个人路径 **0 命中**；`.env` 与 `demo-dist/` 均被忽略 | `AuthContext.tsx` 的既有 `react-hooks/set-state-in-effect` 报错未新增；完整 ESLint 仍 **37 errors、1 warning**。启发式扫描不替代托管平台密钥扫描。 |
+| 完整 Vitest 首轮 `--maxWorkers=2`、第二轮 `--maxWorkers=1` | 首轮 **1389 passed、2 skipped、1 旧 Alerts 超时**；第二轮 **1388 passed、2 skipped、2 旧 DecisionSignals 超时/等待失败** | 失败文件分别单独重跑 **15/15**、**59/59** 通过；不能宣称最终全套全绿，环境时序波动待后续收敛。 |
+| 完整旧 Playwright fixture 首轮；失败两文件定向复测 | 首轮 **30/35**；修正异步应用挂载前读取导航的测试等待后，两文件定向 **8/9**，余下中文设置单项重跑 **1/1** | 后续另作完整再跑，见下一行。浏览器夹具是合成 API。 |
+| 完整旧 Playwright fixture 再跑；Portfolio 定向复测 | 再跑 **34/35**；唯一失败为旧 Portfolio 风险页首次懒加载时 5 秒可见性等待超时；在该测试中延长至 15 秒后单项 **1/1 通过** | 这是最终第三次完整运行之前的中间结果；静态演示独立套件仍 3/3。 |
+| 最终完整旧 Playwright fixture 第三次运行 | **35/35 通过，2.5 分钟**；`/tmp/equitylens-demo-playwright-fixture-third.log` | 在导航与 Portfolio 首次懒加载等待修正后的完整套件；仍是合成 API 夹具，不代表线上 Cloudflare 验收。 |
+
+本地阶段当时尚未验证 Cloudflare 公开网址；后续已经完成的线上结果见本文件最上方。安全清单与重复部署步骤见 [静态演示部署文档](PORTFOLIO_DEMO_DEPLOYMENT.md)。
+
 ## 求职作品集 v0.1 发布候选复核（2026-10-29，当前工作树）
 
 本轮在 Step C 现有产品代码、作品集文档和三条 Fork 工作流保护条件的**当前未提交工作树**运行。Python、Vitest、Playwright、TypeScript 和 Vite 均为本轮重新执行；没有将 Step C 旧日志冒充新测试。浏览器夹具是合成截获 API；真实 NVDA API/截图/原 SEC 来源另行检查。下列日志在本机 `/tmp/equitylens-portfolio-*.log`，不拟入 Git。

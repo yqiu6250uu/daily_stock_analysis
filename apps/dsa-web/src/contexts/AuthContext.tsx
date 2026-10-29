@@ -145,6 +145,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
+const staticDemoAuth: AuthContextValue = {
+  authEnabled: false,
+  loggedIn: false,
+  passwordSet: false,
+  passwordChangeable: false,
+  setupState: 'no_password',
+  isLoading: false,
+  loadError: null,
+  login: async () => ({ success: false }),
+  changePassword: async () => ({ success: false }),
+  logout: async () => undefined,
+  refreshStatus: async () => undefined,
+};
+
+/** Keeps the static portfolio build off the inherited authentication API. */
+export function StaticDemoAuthProvider({ children }: { children: React.ReactNode }) {
+  return <AuthContext.Provider value={staticDemoAuth}>{children}</AuthContext.Provider>;
+}
+
 // eslint-disable-next-line react-refresh/only-export-components -- useAuth is a hook, co-located for context access
 export function useAuth(): AuthContextValue {
   const ctx = useContext(AuthContext);

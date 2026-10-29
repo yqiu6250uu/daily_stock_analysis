@@ -1,6 +1,6 @@
 import type React from 'react';
 import { useId, useState } from 'react';
-import { Activity, BarChart3, Bell, BriefcaseBusiness, ChevronDown, Database, FileSearch, Gauge, Home, LogOut, MessageSquareQuote, Search, Settings2 } from 'lucide-react';
+import { Activity, BarChart3, Bell, Bookmark, BriefcaseBusiness, ChevronDown, Database, FileSearch, Filter, Gauge, GitCompareArrows, Home, LogOut, MessageSquareQuote, Search, Settings2 } from 'lucide-react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { EquityLensMark } from '../brand/EquityLensMark';
 import { useAuth } from '../../contexts/AuthContext';
@@ -11,6 +11,8 @@ import { ConfirmDialog } from '../common/ConfirmDialog';
 import { StatusDot } from '../common/StatusDot';
 import { UiLanguageToggle } from '../i18n/UiLanguageToggle';
 import { ThemeToggle } from '../theme/ThemeToggle';
+import { IS_STATIC_DEMO } from '../../demo/config';
+import { researchV02Text } from '../../i18n/researchV02Text';
 
 type SidebarNavProps = { collapsed?: boolean; onNavigate?: () => void; variant?: 'default' | 'rail' };
 type ToolKey = 'daily' | 'ask' | 'screening' | 'portfolio' | 'signals' | 'backtest' | 'alerts' | 'data' | 'usage';
@@ -36,6 +38,7 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({ collapsed = false, onNav
   const location = useLocation();
   const { language, t } = useUiLanguage();
   const copy = equitylensText[language];
+  const v02 = researchV02Text[language];
   const completionBadge = useAgentChatStore((state) => state.completionBadge);
   const toolsId = useId();
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
@@ -75,7 +78,8 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({ collapsed = false, onNav
           {!collapsed && <p className="el-nav-caption">{copy.primary}</p>}
           {navLink('/', copy.home, Home, true)}
           {navLink('/research', copy.company, FileSearch)}
-          <div className="el-nav-divider" />
+          {navLink('/my-research', v02.myResearch, Bookmark)}
+          <><div className="el-nav-divider" />
           {!collapsed && <p className="el-nav-caption">{copy.secondary}</p>}
           <div className="el-nav-tool-row">
             <NavLink to="/tools" end onClick={onNavigate} aria-label={copy.tools}
@@ -89,19 +93,24 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({ collapsed = false, onNav
             </button>}
           </div>
           {showToolLinks && <div id={toolsId} className="el-nav-tools" aria-label={copy.tools}>
-            {TOOL_GROUPS.map((group) => <div key={group.label} className="el-nav-tools-group" role="group" aria-label={copy[group.label]}>
+            {IS_STATIC_DEMO ? <div className="el-nav-tools-group" role="group" aria-label={copy.toolsGroupAnalysis}>
+              <span className="el-nav-tools-caption" aria-hidden="true">{copy.toolsGroupAnalysis}</span>
+              {navLink('/tools/metrics', v02.metrics, BarChart3)}
+              {navLink('/tools/compare', v02.compare, GitCompareArrows)}
+              {navLink('/tools/screener', v02.screenerShort, Filter)}
+            </div> : TOOL_GROUPS.map((group) => <div key={group.label} className="el-nav-tools-group" role="group" aria-label={copy[group.label]}>
               <span className="el-nav-tools-caption" aria-hidden="true">{copy[group.label]}</span>
               {group.keys.map((key) => { const item = TOOL_LINKS.find((link) => link.key === key)!; return navLink(item.to, copy[item.key], item.icon); })}
             </div>)}
-          </div>}
+          </div>}</>
         </nav>
-        {!collapsed && <div className="el-sidebar-note"><span className="el-sidebar-note-line" />{copy.searchHint}</div>}
+        {!collapsed && <div className="el-sidebar-note"><span className="el-sidebar-note-line" />{IS_STATIC_DEMO ? copy.demoSidebarNote : copy.searchHint}</div>}
       </div>
       <div className="el-nav-bottom">
-        <NavLink to="/settings" onClick={onNavigate} aria-label={copy.settings}
+        {!IS_STATIC_DEMO && <NavLink to="/settings" onClick={onNavigate} aria-label={copy.settings}
           className={({ isActive }) => `el-nav-link ${isActive ? 'el-nav-link-active' : ''} ${collapsed ? 'el-nav-link-compact' : ''}`}>
           <Settings2 className="el-nav-icon" aria-hidden="true" />{!collapsed && <span>{copy.settings}</span>}
-        </NavLink>
+        </NavLink>}
         <div className="el-sidebar-controls">
           <UiLanguageToggle variant="nav" collapsed={collapsed} triggerClassName={`el-nav-link ${collapsed ? 'el-nav-link-compact' : ''}`} iconClassName="el-nav-icon" labelClassName="el-control-label" />
           <ThemeToggle variant="nav" collapsed={collapsed} triggerClassName={`el-nav-link ${collapsed ? 'el-nav-link-compact' : ''}`} iconClassName="el-nav-icon" labelClassName="el-control-label" />

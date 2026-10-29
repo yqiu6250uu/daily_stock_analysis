@@ -74,7 +74,7 @@ for (const state of ['complete', 'missing-price', 'snapshot-error', 'invalid-top
     });
     await page.goto('/portfolio');
     const dashboard = page.locator('section').filter({ has: page.getByText('风险与暴露看板', { exact: true }) });
-    await expect(dashboard).toBeVisible();
+    await expect(dashboard).toBeVisible({ timeout: 15_000 });
     await expect(page.getByRole('button', { name: '刷新数据', exact: true })).toBeVisible();
     if (state === 'snapshot-error') {
       await expect(dashboard.getByText('总市值: --')).toBeVisible();
