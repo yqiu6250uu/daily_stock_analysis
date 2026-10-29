@@ -1,10 +1,10 @@
 import type React from 'react';
 import { useEffect, useMemo, useState } from 'react';
-import { ArrowRight, ArrowUpRight, Landmark, Search } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, BarChart3, Bookmark, Filter, GitCompareArrows, Landmark, Search } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { secFinancialsApi } from '../api/secFinancials';
-import { IS_STATIC_DEMO, isVerifiedDemoTicker } from '../demo/config';
+import { IS_STATIC_DEMO, VERIFIED_DEMO_TICKERS, isVerifiedDemoTicker } from '../demo/config';
 import { researchV02Text } from '../i18n/researchV02Text';
 import { useUiLanguage } from '../contexts/UiLanguageContext';
 import { equitylensText } from '../i18n/equitylensText';
@@ -53,6 +53,9 @@ const ResearchHomePage: React.FC = () => {
   const [data, setData] = useState<SecFinancialResponse | null>(featuredCache?.value ?? null);
   const [loading, setLoading] = useState(!featuredCache);
   const [error, setError] = useState(false);
+  const [universe, setUniverse] = useState<SecFinancialResponse[]>([]);
+  const [universeError, setUniverseError] = useState(false);
+  const [questionTicker, setQuestionTicker] = useState('NVDA');
 
   useEffect(() => { document.title = `${copy.home} · EquityLens`; }, [copy.home]);
   useEffect(() => {
@@ -62,6 +65,14 @@ const ResearchHomePage: React.FC = () => {
     sync();
     media.addEventListener('change', sync);
     return () => media.removeEventListener('change', sync);
+  }, []);
+  useEffect(() => {
+    if (!IS_STATIC_DEMO) return;
+    let active = true;
+    Promise.all(VERIFIED_DEMO_TICKERS.map((ticker) => secFinancialsApi.getCompany(ticker)))
+      .then((values) => { if (active) setUniverse(values); })
+      .catch(() => { if (active) setUniverseError(true); });
+    return () => { active = false; };
   }, []);
   useEffect(() => {
     if (focused || query || reducedMotion) return undefined;
@@ -180,10 +191,33 @@ const ResearchHomePage: React.FC = () => {
         <footer className="el-feature-foot"><span>{data ? `${copy.retrieved} ${data.retrieved_at}` : copy.dataLoading}</span><span className="el-feature-actions">{latest && <Link to="/research/NVDA#cash-flow">{copy.compareCashFlow}<ArrowRight aria-hidden="true" /></Link>}<Link to="/research/NVDA">{copy.goToCompany}<ArrowRight aria-hidden="true" /></Link></span></footer>
       </section>
 
-      <section className="el-v02-home-universe" aria-labelledby="v02-home-universe"><div><p className="el-eyebrow">SEC EDGAR / {v02.publicReady}</p><h2 id="v02-home-universe">{v02.verifiedCompanies}</h2><p>{v02.toolsScope}</p></div>
-        <div>{(['NVDA', 'MSFT', 'AMAT'] as const).map((ticker) => <Link key={ticker} to={`/research/${ticker}`}><strong>{ticker}</strong><span>{ticker === 'NVDA' ? 'NVIDIA' : ticker === 'MSFT' ? 'Microsoft' : 'Applied Materials'}</span><ArrowUpRight aria-hidden="true" /></Link>)}</div>
-      </section>
-      <section className="el-home-bottom"><div className="el-home-bottom-intro"><p className="el-eyebrow">{copy.toolsEyebrow}</p><h2>{copy.toolsTitle}</h2><p>{IS_STATIC_DEMO ? v02.toolsIntro : copy.toolsBody}</p></div><Link to="/tools" className="el-tools-link"><Landmark aria-hidden="true" /><span>{copy.toolsAction}</span><ArrowUpRight aria-hidden="true" /></Link></section>
+      {IS_STATIC_DEMO ? <>
+        <section className="el-v02-home-universe" aria-labelledby="v02-home-universe">
+          <div className="el-v021-section-intro"><p className="el-eyebrow">SEC EDGAR / {v02.publicReady}</p><h2 id="v02-home-universe">{v02.verifiedCompanies}</h2><p>{v02.toolsScope}</p></div>
+          <div className="el-v021-company-list">
+            {VERIFIED_DEMO_TICKERS.map((ticker) => {
+              const company = universe.find((item) => item.ticker === ticker);
+              const period = company?.periods.find((item) => item.type === 'annual');
+              return <Link key={ticker} to={`/research/${ticker}`} className="el-v021-company-row">
+                <span className="el-v021-company-symbol">{ticker.slice(0, 1)}</span>
+                <span className="el-v021-company-name"><strong>{company?.company_name ?? (ticker === 'NVDA' ? 'NVIDIA' : ticker === 'MSFT' ? 'Microsoft' : 'Applied Materials')}</strong><small>{ticker} · {period ? `FY${period.fiscal_year} · ${period.period_end}` : v02.loading}</small></span>
+                <span className="el-v021-company-metric"><small>{v02.revenue} · {v02.sourceConfirmed}</small><strong>{period?.values.revenue ? `${compactValue(period.values.revenue, language)} ${copy.trendUnit}` : '—'}</strong></span>
+                <span className="el-v021-company-metric"><small>{v02.cash} · {v02.sourceConfirmed}</small><strong>{period?.values.operating_cash_flow ? `${compactValue(period.values.operating_cash_flow, language)} ${copy.trendUnit}` : '—'}</strong></span>
+                <ArrowUpRight aria-hidden="true" />
+              </Link>;
+            })}
+            {universeError && <p role="alert" className="el-v02-caution">{v02.noData}</p>}
+          </div>
+        </section>
+        <section className="el-v021-discovery" aria-labelledby="v021-question-title">
+          <div><p className="el-eyebrow">02 / {v02.researchQuestions}</p><h2 id="v021-question-title">{v02.exploreQuestion}</h2><p>{v02.questionScope}</p></div>
+          <div className="el-v021-question-action"><strong>{v02.researchQuestion}</strong><label>{v02.viewCompany}<select value={questionTicker} onChange={(event) => setQuestionTicker(event.target.value)}>{VERIFIED_DEMO_TICKERS.map((ticker) => <option key={ticker} value={ticker}>{ticker}</option>)}</select></label><Link to={`/research/${questionTicker}/questions/revenue-cash-flow`}>{v02.investigate}<ArrowRight aria-hidden="true" /></Link></div>
+        </section>
+        <section className="el-v021-home-tools" aria-labelledby="v021-tools-title"><div className="el-v021-section-intro"><p className="el-eyebrow">03 / {v02.tools}</p><h2 id="v021-tools-title">{v02.tools}</h2><p>{v02.toolsScope}</p></div><div className="el-v021-tool-links">
+          {([[ '/tools/metrics', v02.metrics, v02.metricDescription, BarChart3 ], [ '/tools/compare', v02.compare, v02.compareDescription, GitCompareArrows ], [ '/tools/screener', v02.screenerShort, v02.screenerDescription, Filter ]] as const).map(([path, title, description, Icon]) => <Link key={path} to={path}><Icon aria-hidden="true" /><strong>{title}</strong><small>{description}</small><ArrowUpRight aria-hidden="true" /></Link>)}
+        </div></section>
+        <section className="el-v021-home-save"><div><Bookmark aria-hidden="true" /><h2>{v02.myResearch}</h2><p>{v02.storageNotice}</p></div><Link to="/my-research">{v02.openSaved}<ArrowUpRight aria-hidden="true" /></Link></section>
+      </> : <section className="el-home-bottom"><div className="el-home-bottom-intro"><p className="el-eyebrow">{copy.toolsEyebrow}</p><h2>{copy.toolsTitle}</h2><p>{copy.toolsBody}</p></div><Link to="/tools" className="el-tools-link"><Landmark aria-hidden="true" /><span>{copy.toolsAction}</span><ArrowUpRight aria-hidden="true" /></Link></section>}
     </div>
   );
 };

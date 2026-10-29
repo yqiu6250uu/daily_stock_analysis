@@ -1,6 +1,6 @@
 import type React from 'react';
 import { useId, useState } from 'react';
-import { Activity, BarChart3, Bell, Bookmark, BriefcaseBusiness, ChevronDown, Database, FileSearch, Filter, Gauge, GitCompareArrows, Home, LogOut, MessageSquareQuote, Search, Settings2 } from 'lucide-react';
+import { Activity, BarChart3, Bell, Bookmark, BookOpen, BriefcaseBusiness, ChevronDown, Database, FileSearch, Filter, Gauge, GitCompareArrows, Home, Info, LogOut, MessageSquareQuote, Search, Settings2 } from 'lucide-react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { EquityLensMark } from '../brand/EquityLensMark';
 import { useAuth } from '../../contexts/AuthContext';
@@ -78,6 +78,7 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({ collapsed = false, onNav
           {!collapsed && <p className="el-nav-caption">{copy.primary}</p>}
           {navLink('/', copy.home, Home, true)}
           {navLink('/research', copy.company, FileSearch)}
+          {navLink('/questions', v02.researchQuestions, BookOpen)}
           {navLink('/my-research', v02.myResearch, Bookmark)}
           <><div className="el-nav-divider" />
           {!collapsed && <p className="el-nav-caption">{copy.secondary}</p>}
@@ -107,6 +108,7 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({ collapsed = false, onNav
         {!collapsed && <div className="el-sidebar-note"><span className="el-sidebar-note-line" />{IS_STATIC_DEMO ? copy.demoSidebarNote : copy.searchHint}</div>}
       </div>
       <div className="el-nav-bottom">
+        {navLink('/about', v02.about, Info)}
         {!IS_STATIC_DEMO && <NavLink to="/settings" onClick={onNavigate} aria-label={copy.settings}
           className={({ isActive }) => `el-nav-link ${isActive ? 'el-nav-link-active' : ''} ${collapsed ? 'el-nav-link-compact' : ''}`}>
           <Settings2 className="el-nav-icon" aria-hidden="true" />{!collapsed && <span>{copy.settings}</span>}

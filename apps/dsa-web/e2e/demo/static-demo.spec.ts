@@ -7,7 +7,8 @@ test('verified multi-company search, report, evidence and local continuity', asy
     if (url.pathname.startsWith('/api/') || url.port === '8000' || url.hostname === 'localhost') privateCalls.push(url.href);
   });
   await page.goto('/');
-  await expect(page.getByText('Dated SEC snapshots · NVDA, MSFT and AMAT · No live updates or public AI calls')).toBeVisible();
+  await expect(page.getByText('YQ · PORTFOLIO DEMO')).toBeVisible();
+  await expect(page.getByText(/SEC financial snapshots · NVDA, MSFT, AMAT/)).toBeVisible();
   await expect(page.getByText('215,938,000,000 USD')).toBeVisible();
   const search = page.getByLabel('Search by ticker');
   await search.fill('AAPL'); await search.press('Enter');
@@ -38,6 +39,9 @@ test('verified multi-company search, report, evidence and local continuity', asy
   expect((await download).suggestedFilename()).toContain('MSFT');
   await page.goto('/my-research');
   await expect(page.getByText(/MSFT · Is revenue growth/)).toBeVisible();
+  const savedDownload = page.waitForEvent('download');
+  await page.getByRole('button', { name: 'Export saved context' }).click();
+  expect((await savedDownload).suggestedFilename()).toContain('MSFT');
   await page.getByRole('link', { name: 'Reopen' }).click();
   await expect(page.getByRole('heading', { name: 'Is revenue growth translating into operating cash flow?' })).toBeVisible();
   await page.goto('/my-research');
@@ -103,4 +107,55 @@ test('unsupported inherited routes explain the public boundary', async ({ page }
   await expect(page.getByRole('heading', { name: 'This workspace is not in the public demo.' })).toBeVisible();
   await page.getByRole('link', { name: 'Return to Research Home' }).click();
   await expect(page).toHaveURL(/\/$/);
+});
+
+test('first visit exposes three real research entries, question, tools and methodology', async ({ page }) => {
+  await page.goto('/');
+  await expect(page.getByRole('heading', { name: 'Verified company research' })).toBeVisible();
+  const companies = page.locator('.el-v021-company-row');
+  await expect(companies).toHaveCount(3);
+  await expect(companies.nth(0)).toContainText('215.94');
+  await expect(companies.nth(1)).toContainText('331.84');
+  await expect(companies.nth(2)).toContainText('28.37');
+  await page.locator('.el-v021-question-action select').selectOption('AMAT');
+  await page.locator('.el-v021-question-action a').click();
+  await expect(page).toHaveURL(/research\/AMAT\/questions\/revenue-cash-flow/);
+  await page.getByRole('link', { name: 'About EquityLens' }).click();
+  await expect(page.getByRole('heading', { name: 'Methodology' })).toBeVisible();
+  await expect(page.getByText(/30 reported facts and six derived-quarter values/)).toBeVisible();
+  await expect(page.locator('.el-v021-about-summary')).toContainText('Oct 29, 2026');
+});
+
+test('comparison selection and screener sorting stay within the three verified issuers', async ({ page }) => {
+  await page.goto('/tools/compare');
+  await expect(page.getByRole('table')).toContainText('NVIDIA CORP');
+  await page.getByLabel('AMAT', { exact: true }).uncheck();
+  await expect(page.getByRole('table')).not.toContainText('APPLIED MATERIALS');
+  await expect(page.getByText('Issuers screened: 3')).toBeVisible();
+  await page.goto('/tools/screener');
+  await page.getByLabel('Sort by').selectOption('revenue');
+  await expect(page.getByRole('table').locator('tbody tr').first()).toContainText('MICROSOFT');
+  await page.getByLabel('Minimum annual revenue (USD billions)').fill('-1');
+  await expect(page.getByRole('alert')).toContainText('nonnegative');
+});
+
+test('public research routes retain bilingual responsive light and dark behavior', async ({ browser }) => {
+  test.setTimeout(180_000);
+  const routes = ['/', '/research/NVDA', '/research/MSFT', '/research/AMAT', '/questions', '/research/NVDA/questions/revenue-cash-flow', '/tools', '/tools/compare', '/tools/screener', '/my-research', '/about'];
+  for (const width of [1440, 1024, 768, 390]) for (const language of ['en', 'zh'] as const) for (const theme of ['light', 'dark'] as const) {
+    const context = await browser.newContext({ viewport: { width, height: 900 }, locale: language === 'zh' ? 'zh-CN' : 'en-US' });
+    await context.addInitScript(({ language, theme }) => { localStorage.setItem('dsa.uiLanguage', language); localStorage.setItem('theme', theme); }, { language, theme });
+    const page = await context.newPage();
+    const failures: string[] = [];
+    page.on('pageerror', (error) => failures.push(error.message));
+    page.on('request', (request) => { const url = new URL(request.url()); if (url.pathname.startsWith('/api/') || url.hostname === 'localhost') failures.push(url.href); });
+    for (const route of routes) {
+      await page.goto(route);
+      await expect(page.locator('main h1').first(), `${route} ${width} ${language} ${theme}`).toBeVisible();
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth), `${route} ${width} ${language} ${theme}`).toBe(true);
+      expect(await page.locator('html').getAttribute('lang')).toBe(language === 'zh' ? 'zh-CN' : 'en');
+    }
+    expect(failures, `${width} ${language} ${theme}`).toEqual([]);
+    await context.close();
+  }
 });

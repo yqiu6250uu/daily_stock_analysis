@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { clearSavedResearch, listSavedResearch, removeSavedResearch, saveResearch, savedResearchUrl } from '../researchStore';
+import { clearSavedResearch, hasInvalidSavedResearch, listSavedResearch, removeSavedResearch, saveResearch, savedResearchUrl } from '../researchStore';
 
 function memory() {
   const data = new Map<string, string>();
@@ -23,7 +23,9 @@ describe('browser-local research continuity', () => {
     const storage = memory();
     storage.setItem('equitylens.research.v1', JSON.stringify([{ schema_version: 2, ticker: 'MSFT' }, { schema_version: 1, ticker: 'bad<script>' }]));
     expect(listSavedResearch(storage)).toEqual([]);
+    expect(hasInvalidSavedResearch(storage)).toBe(true);
     saveResearch(entry, storage);
+    expect(hasInvalidSavedResearch(storage)).toBe(false);
     clearSavedResearch(storage);
     expect(listSavedResearch(storage)).toEqual([]);
   });

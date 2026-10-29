@@ -36,6 +36,8 @@ const CompanyResearchPage = lazy(() => import('./pages/CompanyResearchPage'));
 const ResearchToolsPage = lazy(() => import('./pages/ResearchToolsPage'));
 const RevenueCashFlowResearchPage = lazy(() => import('./pages/RevenueCashFlowResearchPage'));
 const MyResearchPage = lazy(() => import('./pages/MyResearchPage'));
+const ResearchQuestionsPage = lazy(() => import('./pages/ResearchQuestionsPage'));
+const AboutEquityLensPage = lazy(() => import('./pages/AboutEquityLensPage'));
 
 const AppContent: React.FC = () => {
   const location = useLocation();
@@ -106,6 +108,8 @@ const routeChildren = [
   { path: '/research/:ticker', element: <CompanyResearchPage /> },
   { path: '/research/:ticker/questions/revenue-cash-flow', element: <RevenueCashFlowResearchPage /> },
   { path: '/my-research', element: <MyResearchPage /> },
+  { path: '/questions', element: <ResearchQuestionsPage /> },
+  { path: '/about', element: <AboutEquityLensPage /> },
   { path: '/tools/metrics', element: <ResearchToolsPage mode="metrics" /> },
   { path: '/tools/compare', element: <ResearchToolsPage mode="compare" /> },
   { path: '/tools/screener', element: <ResearchToolsPage mode="screener" /> },

@@ -25,9 +25,10 @@ describe('SidebarNav research hierarchy', () => {
     render(<MemoryRouter initialEntries={['/']}><SidebarNav /></MemoryRouter>);
     expect(screen.getByRole('link', { name: 'EquityLens' })).toHaveAttribute('href', '/');
     const nav = screen.getByRole('navigation', { name: '主导航' });
-    expect(nav.querySelectorAll('a').length).toBe(4);
+    expect(nav.querySelectorAll('a').length).toBe(5);
     expect(screen.getByRole('link', { name: '研究首页' })).toHaveAttribute('href', '/');
     expect(screen.getByRole('link', { name: '公司研究' })).toHaveAttribute('href', '/research');
+    expect(screen.getByRole('link', { name: '研究问题' })).toHaveAttribute('href', '/questions');
     expect(screen.getByRole('link', { name: '我的研究' })).toHaveAttribute('href', '/my-research');
     expect(screen.getByRole('link', { name: '市场工具' })).toHaveAttribute('href', '/tools');
     expect(screen.queryByRole('link', { name: '选股' })).not.toBeInTheDocument();

@@ -8,6 +8,8 @@ import ResearchHomePage from './pages/ResearchHomePage';
 import ResearchToolsPage from './pages/ResearchToolsPage';
 import RevenueCashFlowResearchPage from './pages/RevenueCashFlowResearchPage';
 import MyResearchPage from './pages/MyResearchPage';
+import ResearchQuestionsPage from './pages/ResearchQuestionsPage';
+import AboutEquityLensPage from './pages/AboutEquityLensPage';
 import './App.css';
 
 const router = createBrowserRouter([{
@@ -18,6 +20,8 @@ const router = createBrowserRouter([{
     { path: '/research/:ticker', element: <CompanyResearchPage /> },
     { path: '/research/:ticker/questions/revenue-cash-flow', element: <RevenueCashFlowResearchPage /> },
     { path: '/my-research', element: <MyResearchPage /> },
+    { path: '/questions', element: <ResearchQuestionsPage /> },
+    { path: '/about', element: <AboutEquityLensPage /> },
     { path: '/tools', element: <ResearchToolsPage mode="index" /> },
     { path: '/tools/metrics', element: <ResearchToolsPage mode="metrics" /> },
     { path: '/tools/compare', element: <ResearchToolsPage mode="compare" /> },

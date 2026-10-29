@@ -42,6 +42,8 @@ export default function ResearchToolsPage({ mode }: { mode: Mode }) {
   const [basis, setBasis] = useState<'annual' | 'quarterly'>('annual');
   const [minRevenue, setMinRevenue] = useState('0');
   const [positiveCash, setPositiveCash] = useState(false);
+  const [selectedTickers, setSelectedTickers] = useState<string[]>([...VERIFIED_DEMO_TICKERS]);
+  const [sortBy, setSortBy] = useState<'ticker' | 'revenue'>('ticker');
   useEffect(() => { document.title = `${copy.tools} · EquityLens`; }, [copy.tools]);
   useEffect(() => {
     let active = true;
@@ -56,12 +58,16 @@ export default function ResearchToolsPage({ mode }: { mode: Mode }) {
       label: period.fiscal_year ? `FY${period.fiscal_year}${period.fiscal_quarter ? ` Q${period.fiscal_quarter}` : ''}` : period.period_end,
       value: period.values[metric]?.value ?? null, end: period.period_end,
     })), [selected, basis, metric]);
+  const minimum = Number(minRevenue);
+  const invalidMinimum = !Number.isFinite(minimum) || minimum < 0;
   const screened = companies.filter((company) => {
     const period = latestAnnual(company);
     const revenue = period?.values.revenue?.value;
     const cash = period?.values.operating_cash_flow?.value;
-    return revenue != null && revenue >= Number(minRevenue || 0) * 1_000_000_000 && (!positiveCash || (cash != null && cash > 0));
-  });
+    return !invalidMinimum && revenue != null && revenue >= minimum * 1_000_000_000 && (!positiveCash || (cash != null && cash > 0));
+  }).sort((a, b) => sortBy === 'ticker' ? a.ticker.localeCompare(b.ticker) :
+    (latestAnnual(b)?.values.revenue?.value ?? -Infinity) - (latestAnnual(a)?.values.revenue?.value ?? -Infinity));
+  const compared = companies.filter((company) => selectedTickers.includes(company.ticker));
 
   return <div className="el-v02-page el-v02-tools">
     <p className="el-eyebrow">EQUITYLENS / SEC EDGAR</p>
@@ -92,9 +98,10 @@ export default function ResearchToolsPage({ mode }: { mode: Mode }) {
           <ResponsiveContainer width="100%" height="100%"><LineChart data={chartData}><CartesianGrid vertical={false} stroke="var(--el-line)" /><XAxis dataKey="label" /><YAxis tickFormatter={(value: number) => `${Math.round(value / 1_000_000_000)}`} /><Tooltip formatter={(value) => `${amount(Number(value), language)} USD`} /><Line dataKey="value" stroke="var(--el-action)" strokeWidth={2.5} isAnimationActive={false} connectNulls={false} /></LineChart></ResponsiveContainer>
         </div><div className="el-v02-table-wrap" tabIndex={0} role="region" aria-label={copy.metrics}><table><thead><tr><th>{copy.choosePeriod}</th><th>{copy[metric === 'net_income' ? 'income' : metric === 'operating_cash_flow' ? 'cash' : 'revenue']}</th><th>{copy.originalFiling}</th></tr></thead><tbody>{selected?.periods.filter((item) => item.type === basis).map((item) => <tr key={item.period_end}><td>{item.period_start} → {item.period_end}</td><td>{amount(item.values[metric]?.value, language)} USD</td><td><a href={item.filing_url} target="_blank" rel="noreferrer">{item.filing_form}<ArrowUpRight aria-hidden="true" /></a></td></tr>)}</tbody></table></div></>}
       {(mode === 'compare' || mode === 'screener') && <>
-        {mode === 'screener' && <div className="el-v02-filters"><label>{copy.minRevenue}<input type="number" min="0" step="1" value={minRevenue} onChange={(event) => setMinRevenue(event.target.value)} /></label><label className="el-v02-check"><input type="checkbox" checked={positiveCash} onChange={(event) => setPositiveCash(event.target.checked)} />{copy.positiveCash}</label></div>}
-        <p className="el-v02-caution">{copy.fiscalCaution}</p><h2>{mode === 'screener' ? copy.results : copy.compare} · {mode === 'screener' ? screened.length : companies.length}</h2>
-        {(mode === 'screener' ? screened : companies).length === 0 ? <p>{copy.noMatches}</p> : <div className="el-v02-table-wrap" tabIndex={0} role="region" aria-label={copy.compare}><table><thead><tr><th>{copy.viewCompany}</th><th>{copy.choosePeriod}</th><th>{copy.revenue}</th><th>{copy.income}</th><th>{copy.cash}</th><th>{copy.retrieved}</th><th>{copy.originalFiling}</th></tr></thead><tbody>{(mode === 'screener' ? screened : companies).map((company) => { const period = latestAnnual(company); return <tr key={company.ticker}><th><Link to={`/research/${company.ticker}`}>{company.company_name} · {company.ticker}</Link></th><td>{period?.period_start} → {period?.period_end}</td><td>{amount(period?.values.revenue?.value, language)} USD</td><td>{amount(period?.values.net_income?.value, language)} USD</td><td>{amount(period?.values.operating_cash_flow?.value, language)} USD</td><td>{company.retrieved_at}</td><td>{period && <a href={period.filing_url} target="_blank" rel="noreferrer">{period.filing_form}<ArrowUpRight aria-hidden="true" /></a>}</td></tr>; })}</tbody></table></div>}
+        {mode === 'screener' && <><div className="el-v02-filters"><label>{copy.minRevenue}<input type="number" min="0" step="1" value={minRevenue} aria-invalid={invalidMinimum} onChange={(event) => setMinRevenue(event.target.value)} /></label><label className="el-v02-check"><input type="checkbox" checked={positiveCash} onChange={(event) => setPositiveCash(event.target.checked)} />{copy.positiveCash}</label><label>{copy.sortBy}<select value={sortBy} onChange={(event) => setSortBy(event.target.value as typeof sortBy)}><option value="ticker">{copy.sortTicker}</option><option value="revenue">{copy.sortRevenue}</option></select></label></div>{invalidMinimum && <p role="alert" className="el-search-error">{copy.invalidMinimum}</p>}</>}
+        {mode === 'compare' && <fieldset className="el-v021-compare-select"><legend>{copy.selectCompare}</legend>{companies.map((company) => <label key={company.ticker}><input type="checkbox" checked={selectedTickers.includes(company.ticker)} onChange={(event) => setSelectedTickers((current) => event.target.checked ? [...current, company.ticker] : current.filter((item) => item !== company.ticker))} />{company.ticker}</label>)}</fieldset>}
+        <p className="el-v02-caution">{copy.fiscalCaution} {copy.missingData}</p><p className="el-v02-caution">{copy.screenedCount}: {companies.length}</p><h2>{mode === 'screener' ? copy.results : copy.compare} · {mode === 'screener' ? screened.length : compared.length}</h2>
+        {(mode === 'screener' ? screened : compared).length === 0 ? <p>{copy.noMatches}</p> : <div className="el-v02-table-wrap" tabIndex={0} role="region" aria-label={copy.compare}><table><thead><tr><th>{copy.viewCompany}</th><th>{copy.choosePeriod}</th><th>{copy.revenue}</th><th>{copy.income}</th><th>{copy.cash}</th><th>{copy.retrieved}</th><th>{copy.originalFiling}</th></tr></thead><tbody>{(mode === 'screener' ? screened : compared).map((company) => { const period = latestAnnual(company); return <tr key={company.ticker}><th><Link to={`/research/${company.ticker}`}>{company.company_name} · {company.ticker}</Link><details><summary>{copy.evidence}</summary><small>{(['revenue', 'net_income', 'operating_cash_flow'] as const).map((field) => `${period?.values[field]?.sources[0]?.concept ?? '—'} (${period?.values[field]?.sources[0]?.unit ?? '—'})`).join(' · ')}</small></details></th><td>{period ? `FY${period.fiscal_year} · ${period.period_start} → ${period.period_end}` : '—'}</td><td>{amount(period?.values.revenue?.value, language)} USD</td><td>{amount(period?.values.net_income?.value, language)} USD</td><td>{amount(period?.values.operating_cash_flow?.value, language)} USD</td><td>{company.retrieved_at}</td><td>{period && <a href={period.filing_url} target="_blank" rel="noreferrer">{period.filing_form}<ArrowUpRight aria-hidden="true" /></a>}</td></tr>; })}</tbody></table></div>}
       </>}
       <div className="el-v02-tools-foot"><FileSearch aria-hidden="true" /><Link to="/research/NVDA">{copy.investigate}<ArrowUpRight aria-hidden="true" /></Link></div>
     </>}

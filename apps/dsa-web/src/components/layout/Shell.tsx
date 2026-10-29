@@ -11,6 +11,7 @@ import { UiLanguageToggle } from '../i18n/UiLanguageToggle';
 import { useUiLanguage } from '../../contexts/UiLanguageContext';
 import { equitylensText } from '../../i18n/equitylensText';
 import { IS_STATIC_DEMO } from '../../demo/config';
+import { getDemoUniverse } from '../../demo/universeManifest';
 import './equitylens.css';
 
 type ShellProps = { children?: React.ReactNode };
@@ -18,8 +19,18 @@ type ShellProps = { children?: React.ReactNode };
 export const Shell: React.FC<ShellProps> = ({ children }) => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
+  const [snapshotDate, setSnapshotDate] = useState<Date | null>(null);
   const { language } = useUiLanguage();
   const copy = equitylensText[language];
+
+  useEffect(() => {
+    if (!IS_STATIC_DEMO) return;
+    let active = true;
+    getDemoUniverse().then((manifest) => {
+      if (active) setSnapshotDate(new Date(Math.max(...manifest.issuers.map((issuer) => Date.parse(issuer.retrieved_at)))));
+    }).catch(() => { /* The banner remains accurate without a date when metadata is unavailable. */ });
+    return () => { active = false; };
+  }, []);
 
   useEffect(() => {
     if (!mobileOpen) return undefined;
@@ -44,7 +55,11 @@ export const Shell: React.FC<ShellProps> = ({ children }) => {
       </aside>
       <div className="el-workspace">
         {!IS_STATIC_DEMO && <div className="el-desktop-update"><DesktopUpdateIndicator /></div>}
-        {IS_STATIC_DEMO && <div className="el-demo-banner" role="note"><strong>{copy.demoLabel}</strong><span>{copy.demoBanner}</span></div>}
+        {IS_STATIC_DEMO && <div className="el-demo-banner" role="note">
+          <strong>{copy.demoLabel}</strong><span className="el-demo-status">{copy.demoStatus}</span>
+          <span>{copy.demoBanner}{snapshotDate ? ` · ${copy.demoSnapshotDate} ${new Intl.DateTimeFormat(language === 'zh' ? 'zh-CN' : 'en-US', { year: 'numeric', month: 'short', day: 'numeric', timeZone: 'UTC' }).format(snapshotDate)}` : ''}</span>
+          <Link to="/about">{copy.demoAbout}</Link>
+        </div>}
         <main id="main-content" className="el-workspace-main">{children ?? <Outlet />}</main>
       </div>
       <Drawer isOpen={mobileOpen} onClose={() => setMobileOpen(false)} width="max-w-xs" zIndex={90} side="left">

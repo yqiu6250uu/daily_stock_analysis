@@ -7,7 +7,7 @@ import { IS_STATIC_DEMO } from '../demo/config';
 import { useUiLanguage } from '../contexts/UiLanguageContext';
 import { researchV02Text } from '../i18n/researchV02Text';
 import { Evidence } from './CompanyResearchPage';
-import { saveResearch } from '../demo/researchStore';
+import { listSavedResearch, saveResearch } from '../demo/researchStore';
 import type { RevenueCashFlowReport, ResearchCalculation } from '../types/researchQuestions';
 import type { FinancialPeriod } from '../types/secFinancials';
 
@@ -37,7 +37,12 @@ function exportMarkdown(report: RevenueCashFlowReport, language: 'en' | 'zh') {
     ...report.facts.map((fact) => `- ${fact.id}: ${presentValue(fact.value?.value, fact.value?.unit ?? 'USD', language)} | ${fact.value?.sources.map((source) => source.url).join(', ') ?? '—'}`),
     '', `## ${copy.calculations}`,
     ...report.calculations.map((calc) => `- ${calc.id}: ${presentValue(calc.value, calc.unit, language)} | ${calc.definition} | ${calc.input_fact_ids.join(', ')}${calc.reason ? ` | ${calc.reason}` : ''}`),
-    '', `## ${copy.observations}`, ...report.observations.map((item) => `- ${item.template_id}: ${item.calculation_ids.join(', ')}`),
+    '', `## ${copy.observations}`, ...report.observations.map((item) => {
+      const message = item.template_id === 'both_increased' ? copy.bothIncreased : item.template_id === 'revenue_up_cash_not_up' ? copy.revenueUpCashNotUp : item.template_id === 'mixed_movement' ? copy.mixedMovement : copy.insufficientGrowth;
+      return `- ${message} (${item.calculation_ids.join(', ')})`;
+    }),
+    '', `## ${copy.alternatives}`, `- ${copy.workingCapital}`, `- ${copy.taxNonCash}`, `- ${copy.customerTiming}`,
+    '', `## ${copy.sourceLinks}`, ...Array.from(new Set(report.facts.flatMap((fact) => fact.value?.sources.map((source) => source.url) ?? []))).map((url) => `- ${url}`),
     '', copy.noCausality, '', copy.storageNotice,
   ];
   const url = URL.createObjectURL(new Blob([lines.join('\n')], { type: 'text/markdown;charset=utf-8' }));
@@ -64,6 +69,8 @@ export default function RevenueCashFlowResearchPage() {
   const [ai, setAi] = useState<{ status: string; content?: { interpretations: Array<{ text: string; citation_ids: string[] }> } } | null>(null);
   const [aiLoading, setAiLoading] = useState(false);
   const [periodOptions, setPeriodOptions] = useState<FinancialPeriod[]>([]);
+  const savedRecord = report?.current_period ? listSavedResearch().find((item) => item.kind === 'question' && item.ticker === normalized && item.basis === basis && item.period_end === report.current_period?.period_end) : undefined;
+  const savedSnapshotChanged = Boolean(savedRecord && report && (savedRecord.fact_hash !== report.fact_hash || savedRecord.retrieved_at !== report.retrieved_at));
 
   useEffect(() => { document.title = `${normalized} · ${copy.investigation} · EquityLens`; }, [normalized, copy.investigation]);
   useEffect(() => {
@@ -126,13 +133,9 @@ export default function RevenueCashFlowResearchPage() {
         <small>{report.current_period?.filing_form} · {copy.retrieved} {report.retrieved_at}</small></div>
         {report.current_period && <a href={report.current_period.filing_url} target="_blank" rel="noreferrer">{copy.originalFiling}<ArrowUpRight aria-hidden="true" /></a>}
       </section>
-      <section className="el-v02-section" aria-labelledby="v02-observations"><p className="el-eyebrow">01 / {copy.calculated}</p><h2 id="v02-observations">{copy.observations}</h2>
-        {report.observations.map((item) => <div className="el-v02-observation" key={item.id}><span>{item.status === 'insufficient_evidence' ? copy.insufficient : copy.calculated}</span>
-          <p>{item.template_id === 'both_increased' ? copy.bothIncreased : item.template_id === 'revenue_up_cash_not_up' ? copy.revenueUpCashNotUp : item.template_id === 'mixed_movement' ? copy.mixedMovement : copy.insufficientGrowth}</p>
-          <small>{item.calculation_ids.map((id) => <a key={id} href={`#calc-${id}`}>{id} </a>)}</small></div>)}
-        <p className="el-v02-caution">{copy.noCausality}</p>
-      </section>
-      <section className="el-v02-section" aria-labelledby="v02-facts"><p className="el-eyebrow">02 / {copy.evidence}</p><h2 id="v02-facts">{copy.facts}</h2>
+      <p className="el-v02-caution">{copy.comparableBasis}</p>
+      {savedRecord && <p role="status" className="el-v02-caution">{savedSnapshotChanged ? copy.snapshotChanged : copy.snapshotCurrent}</p>}
+      <section className="el-v02-section" aria-labelledby="v02-facts"><p className="el-eyebrow">01 / {copy.evidence}</p><h2 id="v02-facts">{copy.facts}</h2>
         <div className="el-v02-fact-grid">{report.facts.map((fact) => <article id={`fact-${fact.id}`} key={fact.id}>
           <span>{fact.role === 'current' ? copy.current : copy.prior} · {fact.period_end ?? '—'}</span>
           <h3>{copy[FACT_LABELS[fact.field as keyof typeof FACT_LABELS] ?? 'revenue']}</h3>
@@ -142,8 +145,14 @@ export default function RevenueCashFlowResearchPage() {
         </article>)}</div>
         {!report.prior_period && <p className="el-v02-caution">{copy.noPrior}</p>}
       </section>
-      <section className="el-v02-section" aria-labelledby="v02-calculations"><p className="el-eyebrow">03 / {copy.calculated}</p><h2 id="v02-calculations">{copy.calculations}</h2>
+      <section className="el-v02-section" aria-labelledby="v02-calculations"><p className="el-eyebrow">02 / {copy.calculated}</p><h2 id="v02-calculations">{copy.calculations}</h2>
         <div className="el-v02-calculation-grid">{report.calculations.map((item) => <div id={`calc-${item.id}`} key={item.id}>{calculationRow(item)}</div>)}</div>
+      </section>
+      <section className="el-v02-section" aria-labelledby="v02-observations"><p className="el-eyebrow">03 / {copy.calculated}</p><h2 id="v02-observations">{copy.observations}</h2>
+        {report.observations.map((item) => <div className="el-v02-observation" key={item.id}><span>{item.status === 'insufficient_evidence' ? copy.insufficient : copy.calculated}</span>
+          <p>{item.template_id === 'both_increased' ? copy.bothIncreased : item.template_id === 'revenue_up_cash_not_up' ? copy.revenueUpCashNotUp : item.template_id === 'mixed_movement' ? copy.mixedMovement : copy.insufficientGrowth}</p>
+          <small>{item.calculation_ids.map((id) => <a key={id} href={`#calc-${id}`}>{id} </a>)}</small></div>)}
+        <p className="el-v02-caution">{copy.noCausality}</p>
       </section>
       <section className="el-v02-section el-v02-method" aria-labelledby="v02-questions"><p className="el-eyebrow">04 / {copy.needsReview}</p><h2 id="v02-questions">{copy.alternatives}</h2>
         <ul><li>{copy.workingCapital}</li><li>{copy.taxNonCash}</li><li>{copy.customerTiming}</li></ul>
@@ -153,6 +162,9 @@ export default function RevenueCashFlowResearchPage() {
           {ai && <div role="status">{ai.status === 'generated' && ai.content ? ai.content.interpretations.map((item, index) =>
             <p key={index}>{item.text} <small>{item.citation_ids.map((id) => <a href={id.startsWith('current.') || id.startsWith('prior.') ? `#fact-${id}` : `#calc-${id}`} key={id}>{id} </a>)}</small></p>) : ai.status === 'not_configured' ? copy.aiNotConfigured : copy.aiFailed}</div>}</>}
         <small>{copy.snapshot}: {report.fact_hash.slice(0, 16)} · {copy.method}: {report.method_version} · {copy.calculatedAt}: {report.calculated_at}</small>
+      </section>
+      <section className="el-v02-section" aria-labelledby="v02-sources"><p className="el-eyebrow">05 / SEC EDGAR</p><h2 id="v02-sources">{copy.sourceLinks}</h2><p className="el-v02-caution">{copy.aboutDataDetail}</p>
+        <div className="el-v021-source-list">{Array.from(new Set(report.facts.flatMap((fact) => fact.value?.sources.map((source) => source.url) ?? []))).map((url) => <a key={url} href={url} target="_blank" rel="noreferrer">{url}<ArrowUpRight aria-hidden="true" /></a>)}</div>
       </section>
       <div className="el-v02-actions"><button type="button" onClick={save}><Save aria-hidden="true" />{copy.save}</button>
         <button type="button" onClick={() => exportMarkdown(report, language)}><Download aria-hidden="true" />{copy.export}</button>

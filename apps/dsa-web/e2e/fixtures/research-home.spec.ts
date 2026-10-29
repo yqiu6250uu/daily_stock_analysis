@@ -40,7 +40,7 @@ test('research home supports real navigation, data preview, bilingual search and
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto('/');
   await expect(page.getByRole('heading', { name: 'Research that evolves with the evidence.' })).toBeVisible();
-  await expect(page.getByRole('link', { name: 'EquityLens' })).toBeVisible();
+  await expect(page.getByRole('link', { name: 'EquityLens', exact: true })).toBeVisible();
   await expect(page.getByText('2,000,000,000 USD')).toBeVisible();
   await expect(page.getByRole('link', { name: 'Original SEC filing' })).toHaveAttribute('href', sourceUrl);
   await page.getByRole('tab', { name: 'Financial trends' }).click();
@@ -57,7 +57,7 @@ test('research home supports real navigation, data preview, bilingual search and
   await page.getByRole('textbox', { name: 'Search by ticker' }).press('Enter');
   await expect(page).toHaveURL(/\/research\/NVDA$/);
   await expect(page.getByRole('heading', { name: 'Company financial research' })).toBeVisible();
-  await page.getByRole('link', { name: 'EquityLens' }).click();
+  await page.getByRole('link', { name: 'EquityLens', exact: true }).click();
   await expect(page).toHaveURL(/\/$/);
   expect(financialRequests).toBe(2); // company view fetches once; returning home reuses its session preview.
 

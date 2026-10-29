@@ -32,6 +32,15 @@ export function listSavedResearch(storage: Pick<Storage, 'getItem'> = localStora
   } catch { return []; }
 }
 
+export function hasInvalidSavedResearch(storage: Pick<Storage, 'getItem'> = localStorage): boolean {
+  try {
+    const raw = storage.getItem(KEY);
+    if (raw === null) return false;
+    const parsed: unknown = JSON.parse(raw);
+    return !Array.isArray(parsed) || parsed.some((item) => !valid(item));
+  } catch { return true; }
+}
+
 export function saveResearch(
   entry: Omit<SavedResearch, 'id' | 'schema_version' | 'saved_at'>,
   storage: Pick<Storage, 'getItem' | 'setItem'> = localStorage,
