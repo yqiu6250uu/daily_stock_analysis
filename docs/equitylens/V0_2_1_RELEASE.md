@@ -1,0 +1,33 @@
+# EquityLens Portfolio Demo v0.2.1
+
+**Release status:** **public and independently verified on 2026-10-30** at [https://equitylens-portfolio-v01.pages.dev/](https://equitylens-portfolio-v01.pages.dev/). Cloudflare Pages Direct Upload production deployment `6d713b95-9285-44c9-b90e-a8d12dad42b0` serves the exact static build of source commit `afe47616b7b2a2cdb5bdaa917f1d2911925ae527`. Preview deployment `ba615740-2363-4e25-8b6d-afd759e4aeb2` passed before production. The previous v0.1 production deployment `b7271836-d85e-48eb-9f3d-804bc2d7b877` remains a rollback target.
+
+## Public acceptance and rollback
+
+- The stable HTTPS URL and direct `/research/NVDA`, `/research/MSFT`, `/research/AMAT`, question, tools, My Research and About routes returned HTTP 200. `/build-info.json` reports `0.2.1` and source revision `afe47616b7b2a2cdb5bdaa917f1d2911925ae527`.
+- The same eight Playwright public-demo tests passed **8/8** on the preview and again **8/8** on production. They cover search, three issuers, report facts, evidence, saved research/export, limited tools, unsupported routes, and 176 route/width/language/theme loads. Production screenshots in `images/v021-*.png` were captured from the stable URL, not a mockup.
+- The public `demo/v02/universe.json` SHA-256 is `ffefdccf713be564e32b0532bddaa7dcf9a7bc6690b560511b8ccd8c399902fe`, matching the reviewed local file; all six financial/report hashes in that manifest match the upload. The 20-file static output aggregate digest is `5f78da18afd9f44fb89960fa83c5cad938cf734d6eb6404d0f00e8ea43c03142` using path plus per-file SHA-256 concatenation. No Pages Functions, backend, credentials or local contact address were uploaded.
+- If the production site regresses, open Cloudflare Pages → `equitylens-portfolio-v01` → Deployments → prior production ID `b7271836-d85e-48eb-9f3d-804bc2d7b877` → **Rollback to this deployment**, then rerun the public smoke checks. The previous deployment remains available; GitHub `main` is unchanged.
+
+## Product scope
+
+The public build serves a research-first React workspace. Research Home exposes three checked SEC issuer snapshots; the ticker search accepts **NVDA, MSFT and AMAT** only. Visitors can open annual and quarterly company financials, inspect original filings, follow the deterministic revenue/operating-cash-flow question, explore limited metrics, compare dated fiscal periods, filter the three-company universe, and save/reopen/remove research in the current browser. The My Research page exports saved context as Markdown; the report exports its fact/metric/source summary. The new About page explains the methodology, 30 reported-fact and six derived-quarter validation sample, limitations, technology and upstream MIT attribution.
+
+The compact YQ portfolio banner is separate from the EquityLens brand. Its latest snapshot date is read from `demo/v02/universe.json`, not embedded in UI code. The site has English and Simplified Chinese controls, light/dark themes, a mobile drawer and accessible Market Tools disclosure. These are dated, read-only snapshots; no visitor calls SEC, FastAPI, an LLM or a private API. Browser-local saves are the only client-side write state. No full-market search, automatic Follow or live AI interpretation is claimed.
+
+## Data and verification boundary
+
+The v0.2 issuer export checked the latest two annual and two quarterly periods for NVDA/MSFT/AMAT against official SEC CompanyFacts: **30 reported facts and six derived quarterly figures**. Snapshot and report JSON files are fixed by six SHA-256 values in `apps/dsa-web/public-demo/demo/v02/universe.json`. The latest retrieval date in the current manifest is 2026-10-29 UTC. This sample does not validate all historical amendments or other issuers. Different fiscal ends and business models remain visible; the comparison is not a peer ranking.
+
+The Python `RevenueCashFlowReport` and static precomputed report share a versioned contract. Annual periods compare with the prior fiscal year; quarterly periods compare with the same fiscal quarter a year earlier. Missing or incompatible concepts/units remain unavailable. Percentage growth requires a positive base. The observations describe movement only; alternative mechanisms require the filing notes and further investigation. No figure is labeled AI-generated.
+
+## Repeatable release procedure
+
+1. Confirm branch, reviewed source, ignored `.env`, and manifest SHA-256 values. Preserve the current production deployment ID and verify the [Cloudflare rollback path](https://developers.cloudflare.com/pages/configuration/rollbacks/).
+2. From `apps/dsa-web`, run `npm run build:demo` with `DSA_WEB_VERSION=0.2.1` and `DSA_WEB_REVISION=<tested feature commit>`. The upload directory is repository-root `demo-dist/`; it contains no Pages Functions or backend. Scan all files for credentials, personal paths, private API URLs and unintended `.env` material.
+3. Run TypeScript, Vite builds, full Vitest, fixture and static Playwright suites, relevant Python tests, ESLint diagnostics and `git diff --check`; record exact results in `TEST_RESULTS.md`. Test the built static app at four widths, both languages and both themes.
+4. Upload a preview with `wrangler pages deploy demo-dist --project-name equitylens-portfolio-v01 --branch v021-preview --commit-hash <tested feature commit>`. Validate its actual HTTPS URL, deep-link refresh, data values, source links, local saving/export, console and network calls. Do not use a preview branch as a production rollback target.
+5. Only after preview acceptance, upload the **same reviewed folder** to the existing production branch `main` via `wrangler pages deploy demo-dist --project-name equitylens-portfolio-v01 --branch main --commit-hash <tested feature commit>`. Verify the stable public URL independently, then record its deployment ID and screenshots. GitHub `main` remains unchanged; `main` here names the Pages Direct Upload production branch.
+6. If live validation fails, use the project Deployments page → previous production deployment `b7271836-d85e-48eb-9f3d-804bc2d7b877` → **Rollback to this deployment**. [Cloudflare documents](https://developers.cloudflare.com/pages/configuration/rollbacks/) this as an immediate production reversal. Re-run the public smoke test after rollback.
+
+The publication has no Git integration, Pages Functions, backend, model key, scheduler or paid dependency. The expected incremental cost is $0 within Cloudflare Pages Free limits. `docs/equitylens/UNIVERSAL_COMPANY_COVERAGE_ROADMAP.md` records future US-first then A-share coverage research without expanding this release.

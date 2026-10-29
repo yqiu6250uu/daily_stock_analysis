@@ -1,21 +1,22 @@
-# EquityLens feature status — portfolio candidate v0.1
+# EquityLens feature status — public v0.2.1
 
-> **Current release distinction (2026-10-30):** this table records the live v0.1 portfolio baseline. The additional v0.2 capabilities below exist only in the local candidate and have not been published to Cloudflare or pushed to GitHub.
+> **Current release distinction (2026-10-30):** the table immediately below records the public v0.2.1 static demo, verified on the stable HTTPS URL. Rows farther below retain the historical v0.1 baseline and must not be read as current public scope.
 
-## Local v0.2 candidate additions
+## Public v0.2.1 capabilities
 
-| Capability | Local candidate | Public v0.1 |
+| Capability | Public v0.2.1 | Historical public v0.1 |
 | --- | --- | --- |
 | NVDA / MSFT / AMAT static issuer snapshots | Implemented; four recent fiscal periods per issuer independently checked against official CompanyFacts, with source links and hashes | NVDA only |
 | Structured revenue and operating cash flow investigation | Implemented with a shared versioned Python/TypeScript contract, eight Decimal calculations, explicit noncomparable/missing reasons and no causal conclusion | Earlier narrower comparison |
 | Financial metric explorer, three-company comparison and limited screener | Implemented over exactly three verified snapshots; no broad-market ranking | Unavailable |
 | My Research | Versioned browser-local company/question save, reopen, remove and Markdown export; no account or automatic updates | Unavailable |
+| Product entry and methodology | Three real company entries, direct question entry, market tools discovery, YQ portfolio banner with manifest date, About/Methodology page, bilingual navigation and themes | Earlier NVDA-focused entry |
 | Optional AI interpretation | Local backend adapter and mock contract tests; disabled by default; **no real-model quality verification** | Disabled |
 | Inherited Market Tools | Preserved in local app and clearly labeled in static index; not publicly exposed as operational | Unavailable |
 
-See [v0.2 release candidate](V0_2_RELEASE_CANDIDATE.md) and [final checks](TEST_RESULTS.md). This bounded issuer validation is not a universal SEC accuracy claim.
+See [v0.2.1 release record](V0_2_1_RELEASE.md), [v0.2 financial validation](V0_2_RELEASE_CANDIDATE.md) and [final checks](TEST_RESULTS.md). This bounded issuer validation is not a universal SEC accuracy claim. [Universal Company Coverage](UNIVERSAL_COMPANY_COVERAGE_ROADMAP.md) is a later initiative, not a supported feature.
 
-The v0.1 rows below were checked against the local worktree and [public static demo](https://equitylens-portfolio-v01.pages.dev/) on 2026-10-29. The static source was subsequently included in the **local-only v0.2 candidate commit**; the remote feature branch still contains the earlier core SEC workspace. “Tested” names the demonstrated scope; it does not mean every issuer or inherited route has been certified.
+The v0.1 rows below record the first public demo as checked on 2026-10-29. The stable [public site](https://equitylens-portfolio-v01.pages.dev/) now runs v0.2.1; its source is on the feature branch. “Tested” names the demonstrated scope; it does not mean every issuer or inherited route has been certified.
 
 | Category | Capability | Evidence and boundary |
 | --- | --- | --- |

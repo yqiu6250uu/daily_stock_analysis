@@ -2,43 +2,48 @@
 
 **Evidence-based company financial research, built on [daily_stock_analysis](https://github.com/ZhuLinsen/daily_stock_analysis).**
 
-EquityLens helps a reader move from a public-company ticker to reported financial statements, historical trends, a focused revenue-versus-cash-flow comparison, and the original SEC filing behind each important number. A [public, read-only portfolio demo](https://equitylens-portfolio-v01.pages.dev/) now shows the verified NVIDIA workflow with a dated SEC snapshot; the full FastAPI application remains local. It uses deterministic calculations and source-linked disclosures; it does **not** generate an AI investment conclusion or make trading recommendations.
+EquityLens helps a reader move from a public-company ticker to reported financial statements, historical trends, a focused revenue-versus-operating-cash-flow investigation, and the original SEC filing behind each important number. The [public, read-only portfolio demo](https://equitylens-portfolio-v01.pages.dev/) uses dated SEC snapshots; the full FastAPI application remains local. The deterministic investigation does **not** generate an AI investment conclusion or make trading recommendations.
 
-**Development status:** the live website is the stable **v0.1 NVIDIA-only** demo. A local **v0.2 release candidate** adds verified MSFT and AMAT snapshots, a structured revenue/cash-flow investigation, a three-company read-only tools workspace, and browser-local saved research. These additions are **not yet deployed**. See the [v0.2 release candidate](docs/equitylens/V0_2_RELEASE_CANDIDATE.md) for precise scope and verification.
+**Development status:** the public **Portfolio Demo v0.2.1** offers NVDA, MSFT and AMAT snapshots, one structured research question, three-company read-only Market Tools, browser-local saved research, and an About/Methodology page. The local FastAPI application contains additional inherited tools with different readiness. See the [v0.2.1 release record](docs/equitylens/V0_2_1_RELEASE.md) and [bounded validation](docs/equitylens/V0_2_RELEASE_CANDIDATE.md).
 
-The live verified example is **NVIDIA (NVDA)**. The local v0.2 candidate also includes bounded, issuer-specific verification for **Microsoft (MSFT)** and **Applied Materials (AMAT)**; that sample does not certify every historical value or all SEC-listed issuers. The SEC workflow works without an LLM key or account.
+The curated release universe is **NVIDIA (NVDA), Microsoft (MSFT), and Applied Materials (AMAT)**. Four recent fiscal periods per issuer were sampled against official SEC data, checking 30 reported facts and six derived-quarter values in total. This does not certify every historical value or all SEC-listed issuers. The financial workflow works without an LLM key or account.
 
 ## See the working application
 
-**Live portfolio demo:** [equitylens-portfolio-v01.pages.dev](https://equitylens-portfolio-v01.pages.dev/) · [NVIDIA research](https://equitylens-portfolio-v01.pages.dev/research/NVDA). The public site supports **NVDA only**, uses the SEC response retrieved on **2026-10-29**, and does not provide live financial updates or the inherited backend tools. [Deployment and snapshot details](docs/equitylens/PORTFOLIO_DEMO_DEPLOYMENT.md).
+**Live portfolio demo:** [Research Home](https://equitylens-portfolio-v01.pages.dev/) · [NVIDIA research](https://equitylens-portfolio-v01.pages.dev/research/NVDA) · [research question](https://equitylens-portfolio-v01.pages.dev/questions) · [About and methodology](https://equitylens-portfolio-v01.pages.dev/about). The fixed SEC snapshots were retrieved on **2026-10-29 UTC**. The site does not provide live updates or inherited backend tools. [Deployment and rollback details](docs/equitylens/V0_2_1_RELEASE.md).
 
-These screenshots were captured from the actual locally running React/FastAPI application on **2026-10-29**. They show SEC-backed NVDA data, not a design prototype or synthetic browser fixture. The displayed retrieval time belongs to the cached SEC response.
+The [GitHub feature branch](https://github.com/yqiu6250uu/daily_stock_analysis/tree/feature/equitylens-foundation) contains the source and release documentation corresponding to the public v0.2.1 build. The repository default `main` remains the inherited upstream baseline.
+
+The screenshots below were captured from the **actual public v0.2.1 HTTPS site** after deployment, using its dated SEC snapshot files. They are neither static design prototypes nor synthetic test fixtures.
 
 | Research Home | Company Research |
 | --- | --- |
-| [![EquityLens Research Home in English](docs/equitylens/images/research-home-en.png)](docs/equitylens/images/research-home-en.png) | [![NVIDIA company research in English](docs/equitylens/images/company-research-en.png)](docs/equitylens/images/company-research-en.png) |
+| [![EquityLens public Research Home in English](docs/equitylens/images/v021-home-en-light.png)](docs/equitylens/images/v021-home-en-light.png) | [![Microsoft company research on the public website](docs/equitylens/images/v021-company-msft-en.png)](docs/equitylens/images/v021-company-msft-en.png) |
 
-[Revenue and operating cash flow comparison](docs/equitylens/images/revenue-cash-flow-en.png) · [Expanded SEC source evidence](docs/equitylens/images/sec-source-evidence-en.png) · [Research Home in Simplified Chinese](docs/equitylens/images/research-home-zh.png) · [Company Research in Simplified Chinese](docs/equitylens/images/company-research-zh.png) · [Mobile company view](docs/equitylens/images/company-research-mobile-en.png)
+[Full research question report](docs/equitylens/images/v021-report-nvda-en.png) · [Expanded SEC evidence](docs/equitylens/images/v021-evidence-nvda-en.png) · [Research Home in Chinese and dark mode](docs/equitylens/images/v021-home-zh-dark.png) · [Mobile Chinese company page](docs/equitylens/images/v021-company-amat-zh-mobile.png) · [About and methodology](docs/equitylens/images/v021-about-en.png)
 
 ## What works today
 
-- **Research Home:** ticker-only search with validation, a featured NVDA filing preview, reported figures, an annual revenue chart, source links, English/简体中文 controls, and light/dark themes.
+- **Research Home:** ticker-only search restricted to the three checked issuers in the static build, three period-labeled company entries, a featured NVDA filing preview, a direct question entry, Market Tools and My Research access, bilingual controls and light/dark themes.
 - **Company Research:** annual and quarterly SEC-derived facts, fiscal context, revenue/net-income/operating-cash-flow trends, calculated ratios, missing-data indicators, and original filing links. Values distinguish **reported** facts from **derived** figures.
-- **Focused investigation:** “Is revenue growth translating into cash flow?” opens a deterministic, like-period revenue and operating cash flow comparison. It explains incompatible or missing periods and exposes the underlying XBRL concepts and filings. This is a **fact comparison**, not an AI answer or a causal finding.
-- **Legacy Market Tools:** the original project's analysis, market review, screening, backtesting, alerts, and related tools remain accessible in a secondary workspace. Their configuration, data sources, and language coverage differ from the SEC workflow; see [feature status](docs/equitylens/FEATURE_STATUS.md).
+- **Focused investigation:** “Is revenue growth translating into operating cash flow?” opens a deterministic report with like-period facts, eight Decimal calculations, observations, alternative explanations needing review and original SEC evidence. Incompatible or missing periods remain explicit. This is **not** an AI answer or a causal finding.
+- **Limited public tools:** metric explorer, three-company comparison and screener over exactly NVDA/MSFT/AMAT; saved research stays in the current browser and can be reopened, removed and exported as Markdown context.
+- **About and Methodology:** explains source provenance, bounded verification, technology, limitations, AI-assisted development and upstream attribution.
+- **Legacy Market Tools (local application only):** the original project's analysis, market review, screening, backtesting, alerts, and related tools retain their local routes. They require separate configuration/data sources and are not publicly exposed as working static features; see [feature status](docs/equitylens/FEATURE_STATUS.md).
 
 ### Architecture
 
 ```mermaid
 flowchart LR
-    UI[React + TypeScript research workspace] --> API[FastAPI read-only financial endpoint]
-    API --> SEC[SEC EDGAR adapter]
-    SEC --> TICKER[Official ticker mapping]
-    SEC --> SUB[Submissions]
-    SEC --> FACTS[CompanyFacts]
+    TICKER[Official ticker mapping] --> SEC[SEC EDGAR adapter]
+    SUB[Submissions] --> SEC
+    FACTS[CompanyFacts] --> SEC
     SEC --> CACHE[Local TTL cache]
-    API --> NORMALIZE[Deterministic fiscal-period normalization]
-    NORMALIZE --> UI
+    SEC --> NORMALIZE[Deterministic fiscal-period normalization]
+    NORMALIZE --> API[FastAPI financial endpoint]
+    API -->|local mode| UI[React + TypeScript research workspace]
+    NORMALIZE -->|reviewed export| SNAP[Versioned static SEC snapshots and reports]
+    SNAP -->|public demo| UI
     UI --> FILING[Original SEC filing links]
 ```
 
@@ -83,4 +88,4 @@ Playwright fixtures use **synthetic intercepted API data** to test interactions;
 
 EquityLens extends the MIT-licensed [ZhuLinsen/daily_stock_analysis](https://github.com/ZhuLinsen/daily_stock_analysis) project. The original Python/FastAPI/React application, legacy analysis routes, data providers, reporting, and notification features are inherited. The SEC adapter, financial normalization/API, evidence-centered research views, focused comparison, branding, and related tests/documentation are EquityLens additions or substantial adaptations. The original copyright and MIT [LICENSE](LICENSE) are retained. The [upstream documentation](docs/README_EN.md) describes inherited DSA capabilities and may not describe EquityLens's current behavior.
 
-**Next on the public site:** the v0.2 candidate awaits release approval; live AI explanations, automatic Follow updates, a public backend and broad issuer coverage remain unavailable. The public site is static and does not expose the FastAPI service or use paid infrastructure. See [feature status](docs/equitylens/FEATURE_STATUS.md), [deployment notes](docs/equitylens/PORTFOLIO_DEMO_DEPLOYMENT.md), and [release checklist](docs/equitylens/RELEASE_CHECKLIST.md).
+**Next:** pursue [US-first universal coverage and A-share source feasibility](docs/equitylens/UNIVERSAL_COMPANY_COVERAGE_ROADMAP.md) as a separately verified initiative. Live AI explanations, automatic Follow updates, a public backend and broad issuer coverage remain unavailable. The public site does not expose FastAPI or use paid infrastructure. See [feature status](docs/equitylens/FEATURE_STATUS.md), [deployment notes](docs/equitylens/V0_2_1_RELEASE.md), and [release checklist](docs/equitylens/RELEASE_CHECKLIST.md).

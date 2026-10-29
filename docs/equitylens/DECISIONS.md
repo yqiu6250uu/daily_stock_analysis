@@ -1,5 +1,12 @@
 # EquityLens 架构决定记录
 
+## D-020 已定：v0.2.1 保持静态公开边界；通用公司覆盖列入下一计划（2026-10-30）
+
+- 首页、研究问题、三项有限工具、My Research 和 About 在原 React 静态构建中呈现，沿用三家公司经抽样核验的固定快照；不公开 FastAPI、任意 SEC 实时请求、LLM 或继承的后台工具。YQ 作品集身份是次级标识，EquityLens 仍为主品牌。
+- 研究报告的事实与计算不变，仅优化可读顺序和来源检查。保存记录按快照事实摘要与取回时间检查时效；旧记录不冒充新的研究结论。公开财务覆盖仍只限 NVDA、MSFT、AMAT。
+- 后续 [Universal Company Coverage](UNIVERSAL_COMPANY_COVERAGE_ROADMAP.md) 采取美国 SEC 优先、A 股官方来源/API/授权/成本先研究后实现的路线；必须有市场与发行人唯一标识、分市场适配器、共同证据和质量合同、服务端限流/缓存，以及逐发行人独立验收，才可宣称扩大覆盖。它不得延误 v0.2.1 发布。
+- 发布采用同一 Cloudflare Pages Direct Upload 项目的预览再生产验收；预览 `ba615740-2363-4e25-8b6d-afd759e4aeb2` 与生产 `6d713b95-9285-44c9-b90e-a8d12dad42b0` 均已通过真实公网验收。v0.1 部署 ID `b7271836-d85e-48eb-9f3d-804bc2d7b877` 是回滚目标。GitHub 默认分支及原有定时工作流不变。
+
 ## D-019 已定：三家公司静态数据宇宙与版本化研究报告（2026-10-30）
 
 - 保留现有 FastAPI/React/SEC 正规化层；以 Python `Decimal` 在独立服务生成 `RevenueCashFlowReport` v1，前端静态/动态适配器消费同一结构。公开演示只装载经抽样核验的 NVDA、MSFT、AMAT 日期快照，不直接访问 SEC、私有后端或 LLM。

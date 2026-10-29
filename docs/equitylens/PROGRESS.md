@@ -1,5 +1,11 @@
 # EquityLens 进度与交接
 
+## v0.2.1 已公开发布（2026-10-30）
+
+- 在 v0.2 的真实三家公司 SEC 快照与研究报告之上，完成双语三公司研究入口、真实研究问题入口、三项有限 Market Tools 入口、浏览器本机研究入口、About/Methodology 和 YQ 作品集状态横幅；横幅日期来自快照 manifest。侧栏品牌、暖白/深海军蓝和既有研究路由保持不变。
+- 对比工具可选择公司，筛选器可排序并明确仅覆盖三家公司；问题报告按证据、计算、观察、局限和原始申报组织，保存项目会在快照事实摘要或取回时间不符时警示。没有扩大 SEC 抽样验证范围，也没有把确定性报告称作 AI。
+- 代码提交 `afe47616b7b2a2cdb5bdaa917f1d2911925ae527` 已推送功能分支；同一 20 文件静态包先经预览 `ba615740-2363-4e25-8b6d-afd759e4aeb2`、再经生产 `6d713b95-9285-44c9-b90e-a8d12dad42b0` 发布到原 Pages 项目。[公开网站](https://equitylens-portfolio-v01.pages.dev/) 的 8/8 Playwright、176 组页面矩阵、深链接、快照摘要和构建版本已重新验收；原 v0.1 部署 `b7271836-d85e-48eb-9f3d-804bc2d7b877` 保留为回滚点。最终结果见 [测试结果](TEST_RESULTS.md) 和 [发布记录](V0_2_1_RELEASE.md)。用户额外要求的 [Universal Company Coverage](UNIVERSAL_COMPANY_COVERAGE_ROADMAP.md) 已记录为**下一项主要研发计划**，不属于 v0.2.1。
+
 ## v0.2 本地候选版（2026-10-30；公开 v0.1 不变）
 
 - 本地 React 静态演示复用现有 EquityLens 壳层，已加入 NVDA、MSFT、AMAT 三家公司、只读指标探索/对比/有限筛选、结构化收入与经营现金流问题报告，以及可保存/重开/删除/导出的浏览器本机研究。公开 Cloudflare URL 仍运行 NVDA-only v0.1；未上传 v0.2。

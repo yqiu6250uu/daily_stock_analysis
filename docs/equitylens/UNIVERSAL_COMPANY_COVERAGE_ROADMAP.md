@@ -1,0 +1,31 @@
+# Universal Company Coverage — future major initiative
+
+**Status:** architecture roadmap only, added during the v0.2.1 release. The public v0.2.1 demonstration remains a dated, verified **NVDA / MSFT / AMAT** snapshot. No universal search or A-share ingestion is implemented or advertised.
+
+## Rollout and release gates
+
+1. **US first:** extend the existing SEC adapter behind an on-demand server API. Resolve SEC ticker and company-name aliases to CIK, then confirm the selected security and exchange. Use identified SEC requests, conservative throttling, bounded retries and shared cache. The current three-issuer static site remains separate from this later dynamic service.
+2. **Curated US pilot:** add varied fiscal calendars and issuer taxonomies. Independently verify filings, reported values, quarter derivations, amendments and source links issuer by issuer. Publish coverage only for issuers passing quality gates. A successful ticker lookup alone is insufficient.
+3. **A-share source/legal feasibility:** identify exchange and issuer identifiers, official disclosure feeds and their permitted reuse. Confirm machine-readable access, redistribution rights, rate limits, hosting geography and fees directly with providers. Do not build an unofficial scraper or assume public browser access permits a commercial API or public dataset mirror.
+4. **A-share pilot only after gate 3:** implement separate Shanghai/Shenzhen disclosure adapters for a small, verified issuer set. Test Chinese accounting concepts, consolidated versus parent statements, restatements, quarterly cumulative cash flow and units. Expand the public supported universe only after source and methodology review.
+
+## Architecture
+
+`SecurityIdentity` is keyed by **market + exchange + stable issuer identifier + security code**, with aliases for English and Chinese names, historical codes and effective dates. Search results show code, issuer legal name, exchange and market; an ambiguous name returns choices instead of silently selecting one. A security code is never treated as globally unique. Search indexes are refreshed from licensed or official metadata on the server. Unsupported or delisted issuers return explicit status.
+
+`DisclosureAdapter` has market-specific implementations: `SecDisclosureAdapter` uses the existing SEC ticker map, Submissions, CompanyFacts and original filings; `ChinaDisclosureAdapter` will use only sources whose access and reuse conditions have been verified. Both emit a shared `DisclosureFact` contract: identity; accounting standard; statement scope; original concept/label; exact decimal and unit; period start/end and fiscal year/quarter; form/report type; filing, acceptance and amendment dates; source document URL and document identifier; retrieval time; extraction method/version; quality flags. Original source records stay immutable.
+
+The normalizer maps disclosure facts to common research fields **only when accounting meaning, scope, unit and period match**. Cross-market comparisons carry concept and accounting-standard qualifiers; incompatible concepts remain missing. Quarterly values derived from cumulative disclosures retain input IDs and formula. Deterministic calculations use Decimal and preserve evidence IDs, comparability decisions and unavailable reasons. The existing revenue/cash-flow investigation can consume this normalized contract, but market-specific wording and limitations stay explicit.
+
+Server-side request flow: `search → resolve identity → read bounded cache → conditional source retrieval → normalize/validate → versioned response → research report`. Cache keys include market, issuer, filing, methodology version and source revision. Responses show source filing date, retrieval time, cache age and freshness status. Per-provider token buckets, per-user request limits, timeouts, circuit breakers and request deduplication prevent overload and surprise cost. Missing documents, unsupported issuers, access denial and mismatched accounting concepts return typed, user-readable states; no estimated figures are substituted.
+
+## Source and permission research gate (initial desk review, 2026-10-30)
+
+- The [SEC EDGAR API documentation](https://www.sec.gov/search-filings/edgar-application-programming-interfaces) documents Submissions and XBRL CompanyFacts. [SEC Developer Resources](https://www.sec.gov/about/developer-resources) specify fair access and an identified User-Agent, with a current guideline of no more than 10 requests per second across machines. EquityLens should remain more conservative.
+- The [Shanghai Stock Exchange disclosure portal](https://www.sse.com.cn/disclosure/listedinfo/announcement/) and [Shenzhen Stock Exchange company notices](https://www.szse.cn/disclosure/notice/company/index.html) are candidate **original-disclosure** sources. [CNINFO's public disclosure page](https://www.cninfo.com.cn/new/commonUrl?url=data%2Fgongkai) is another candidate index. A browsable page is not proof of a documented bulk API.
+- The [SSE legal statement](https://www.sse.com.cn/home/legal/) permits noncommercial browsing/download subject to its terms and restricts commercial reuse without written permission. The [SZSE site terms](https://www.szse.cn/application/laws/index.html) assert rights over site materials. These terms need provider-specific review before automated extraction, mirroring or commercialization.
+- **Unresolved:** a sanctioned A-share API, request limits, redistribution/public display rights, historical bulk access, and actual price. No $0 cost assumption or implementation commitment is made. Obtain written provider terms or a suitable license before ingestion. If permission or cost is incompatible with the portfolio budget, limit the pilot to manually verified links and metadata or defer it.
+
+## Acceptance before claiming coverage
+
+Search identity must be unambiguous; each public issuer needs original filing links, fiscal-calendar and accounting-standard tests, missing/amendment handling, bounded live requests, and independent source-value samples over multiple periods. Measure coverage as tested issuer/period/metric combinations. Never describe the current three-company static demonstration as full US or A-share coverage.

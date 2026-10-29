@@ -1,5 +1,25 @@
 # EquityLens 分阶段实测结果
 
+## v0.2.1 发布候选最终本地回归（2026-10-30）
+
+本节记录本轮真实运行结果；下方 v0.2 / v0.1 历史结果不冒充 v0.2.1。
+
+| 检查 | 结果 | 边界 |
+| --- | --- | --- |
+| TypeScript `tsc -b`；正常及演示 Vite 构建 | 全部通过；演示输出 `demo-dist/` 20 个静态文件 | 构建在本地，不等于线上验收。 |
+| Vitest `vitest run --maxWorkers=1` | **114 文件；1395 passed、2 skipped、0 failed** | 包含新的 manifest/保存结构单测。 |
+| Playwright 静态演示 `playwright test --config playwright.demo.config.ts --workers=1` | **8 passed** | 包含三家公司、问题报告、保存/导出、工具及 11 路由 × 4 宽度 × 2 语言 × 2 主题的 176 次加载；浏览器不调用私有 API。 |
+| Playwright 继承夹具 `playwright test --config playwright.fixture.config.ts --workers=1` | **35 passed** | API 使用合成夹具，只验证交互回归，不证明财务值正确。 |
+| Python 定向金融/API 回归 | **213 passed、10 warnings** | 包含 SEC 正规化、报告计算、静态快照摘要和来源链接；无新联网 SEC 核验。 |
+| 改动文件 ESLint；全仓 ESLint | 改动文件 **0 问题**；全仓 **37 errors、1 warning** | 全仓欠债与 v0.2 基线相同，主要为继承组件 Hook 规则；不宣称 lint 全绿。 |
+| 六份静态财务/报告 JSON SHA-256 | **6/6 与 `universe.json` 匹配** | 固定数据取回日 2026-10-29 UTC；30 项 reported 与 6 项 derived quarter 的 v0.2 独立抽样范围不变。 |
+| 公网预览 `ba615740.equitylens-portfolio-v01.pages.dev` 的完整 Playwright 静态套件 | **8/8 passed（3.4 分钟）** | 运行在真实 Cloudflare HTTPS 预览，不使用本机浏览器服务或合成财务 fixture。 |
+| 正式 URL `https://equitylens-portfolio-v01.pages.dev/` 的同一 Playwright 套件 | **8/8 passed（3.3 分钟）** | 176 个路由／宽度／语言／主题加载；无整页溢出、页面异常或本机／私有 API 调用。 |
+| 正式站深链接及构建／数据文件 | 首页、NVDA/MSFT/AMAT、问题、比较、筛选、My Research、About **HTTP 200**；`build-info.json` 为 `0.2.1` + `afe47616b7b2a2cdb5bdaa917f1d2911925ae527`；公开 manifest SHA-256 `ffefdccf713be564e32b0532bddaa7dcf9a7bc6690b560511b8ccd8c399902fe` | SHA 与本机 20 文件构建中的 manifest 一致；不是新的联网 SEC 财务核验。 |
+| 实际正式站截图与 SEC 外链 | **7 张** `images/v021-*.png`；展开 NVDA 证据链接指向 `https://www.sec.gov/Archives/edgar/data/1045810/…` | 截图来自稳定公网 URL，涵盖英文、中文、亮暗、桌面、手机、报告和来源展开。 |
+
+上述生产部署 ID 为 `6d713b95-9285-44c9-b90e-a8d12dad42b0`。Cloudflare 预览／生产均使用同一静态目录，之前的 v0.1 生产 ID `b7271836-d85e-48eb-9f3d-804bc2d7b877` 可回滚。网页不进行实时 SEC 请求。
+
 ## v0.2 最终本地候选版回归（2026-10-30）
 
 以下结果对应最终代码、重新导出的 v0.2 快照与构建；**不是**公开 Cloudflare v0.1 的测试结果。浏览器测试使用系统 Chrome。公开站只重新确认 v0.1 未改变，尚无 v0.2 预览或生产上传。

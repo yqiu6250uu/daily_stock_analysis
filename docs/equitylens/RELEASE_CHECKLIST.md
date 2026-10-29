@@ -1,8 +1,6 @@
 # EquityLens GitHub portfolio release checkpoint v0.1
 
-> **v0.2 local gate (2026-10-30):** the 91-file path list below is historical and must not be reused for v0.2. The new candidate adds the v0.1 static demo source plus three-issuer snapshots, shared report contract, read-only tools, local saves, tests and five labeled local screenshots. The public v0.1 site and remote feature branch remain unchanged until separate approval. Review [v0.2 candidate](V0_2_RELEASE_CANDIDATE.md), [final tests](TEST_RESULTS.md), the actual staged diff and the six SHA-256 manifest entries before any push or production upload. Never stage `.env`, local SEC cache, databases, logs, `demo-dist/` or the 14 excluded design drafts.
-
-**Status update, 2026-10-30:** This checklist records the historical approval gate for the exact 91-file release set below. That set was subsequently committed in `74ce2f8fc5d519109b22b6093b1fe861f9f8fa53` and `6d794c450d5fcdd6b57b08731afef89f236c7529` and pushed to `feature/equitylens-foundation` only. A separate [Cloudflare Pages static NVDA demo](https://equitylens-portfolio-v01.pages.dev/) is live after its own user approval. Its source is now included in the **unpublished local v0.2 commit**, not yet on GitHub. The default `main` README is still inherited DSA until a separately approved branch transition. The historical staging instructions below are retained for audit and must not be rerun blindly.
+> **Historical checkpoint only.** This document preserves the approved 91-file v0.1 staging list for audit; do not rerun that list. The current [public v0.2.1 release](V0_2_1_RELEASE.md) uses a different source commit, seven new live-site screenshots and a 20-file static build. Its verification is in [TEST_RESULTS.md](TEST_RESULTS.md). The v0.1 text below describes the earlier release gate, not the current website. `.env`, caches, databases, logs, `demo-dist/` and 14 excluded design drafts remain out of the repository.
 
 ## Release claims and evidence
 
@@ -30,9 +28,9 @@
 4. Only upon explicit authorization for each action, push the feature branch and update the fork's public default branch. A feature-branch push alone does not replace the repository landing-page README. Do not merge, rename or deploy by implication.
 5. Update the GitHub repository description to a factual sentence, after separate approval: **“EquityLens: evidence-based company financial research built on daily_stock_analysis; SEC-sourced NVDA analysis, period-aware metrics, and bilingual React workspace.”** Recommended eventual repository name: `equitylens-research` (retain fork attribution and links); keeping the existing fork name for the first release avoids an unnecessary rename during the urgent CV checkpoint.
 
-## Optional demo, not part of Deliverable A
+## Static demo outcome (supersedes the original optional concept)
 
-A future static, read-only demo can bundle a dated, precomputed NVDA SEC snapshot, original filing URLs, working navigation and chart interactions. It must say when the snapshot was retrieved and never claim live updates. [GitHub Pages](https://docs.github.com/en/pages/getting-started-with-github-pages/what-is-github-pages) supports static sites from public repositories on GitHub Free, so the hosting layer could fit a $0 incremental budget; this has **not** been built, deployed or cost-tested. The current frontend still calls the financial API; a static data adapter/export and deployment review would be additional work. Do not deploy it in this checkpoint.
+The optional v0.1 NVDA demonstration was subsequently built and published, then upgraded to the independently checked three-issuer [Portfolio Demo v0.2.1](V0_2_1_RELEASE.md) on the same Cloudflare Pages Free project. It uses reviewed static SEC snapshots and no public FastAPI or model credentials. The historical 91-file staging set below is retained solely to explain the original portfolio commit.
 
 ## Exact proposed Git staging set
 

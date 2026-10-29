@@ -1,10 +1,10 @@
-# EquityLens Portfolio Demo v0.1 — static deployment
+# EquityLens Portfolio Demo — v0.1 deployment history
 
-> The production URL below remains v0.1. For the **unpublished** v0.2 candidate, see [v0.2 release candidate](V0_2_RELEASE_CANDIDATE.md). Build with `npm run build:demo`, verify the SHA manifest in `public-demo/demo/v02/`, and deploy only after separate approval. A Direct Upload preview may use `wrangler pages deploy demo-dist --project-name equitylens-portfolio-v01 --branch v02-preview`; production remains unchanged until an approved production deployment and live acceptance pass.
+> **Current site:** [Portfolio Demo v0.2.1](V0_2_1_RELEASE.md) is live and verified at the same stable HTTPS URL. This page preserves the **historical v0.1** export, upload and acceptance record; use the v0.2.1 release record for the current build, preview, production ID and rollback procedure.
 
 ## Status and scope
 
-The public v0.1 site is live at **https://equitylens-portfolio-v01.pages.dev/** on Cloudflare Pages Free. The final production deployment was checked on 2026-10-29 after a second upload removed a misleading refresh control from the static company page. The demo supports NVIDIA (`NVDA`) only. It uses a dated, read-only response from the existing SEC-backed EquityLens API; it does not query SEC or FastAPI from visitors' browsers and does not provide live financial updates.
+The public v0.1 site was live at **https://equitylens-portfolio-v01.pages.dev/** on Cloudflare Pages Free until 2026-10-30. Its final production deployment was checked on 2026-10-29 after a second upload removed a misleading refresh control from the static company page. That version supported NVIDIA (`NVDA`) only. It used a dated, read-only response from the existing SEC-backed EquityLens API; it did not query SEC or FastAPI from visitors' browsers and did not provide live financial updates.
 
 The public routes are `/`, `/research`, and `/research/NVDA`. Other paths show an explicit unavailable page. The local application and its legacy Market Tools remain in the source repository but are not part of the demo route tree. The demo retains the React research home, company research, annual and quarterly views, revenue and operating cash flow comparison, SEC evidence, English and Simplified Chinese, and light and dark themes.
 
