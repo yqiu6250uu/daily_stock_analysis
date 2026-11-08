@@ -1,0 +1,47 @@
+{
+  "asof_beijing": "2026-11-08",
+  "quotes": [
+    {
+      "ticker": "NVDA",
+      "close": 186.64,
+      "trade_date": "2026-11-06",
+      "retrieved_at": "2026-11-08T14:12:27.688105+00:00",
+      "field": "Close/Last",
+      "session": "US regular session",
+      "market_timezone": "America/New_York",
+      "source_url": "https://api.nasdaq.com/api/quote/NVDA/historical?assetclass=stocks&limit=10&fromdate=2026-11-06&todate=2026-11-07",
+      "adjustment_basis": "not specified by source",
+      "official_closing_price_certified": false,
+      "raw_path": "/demo/v02/market/nvda-nasdaq-raw.json",
+      "raw_sha256": "064634c2a4ef858791bf7a0865f5c7e1ea78eb6d054a40c97ae5ee1dad9e44ef"
+    },
+    {
+      "ticker": "MSFT",
+      "close": 530.61,
+      "trade_date": "2026-11-06",
+      "retrieved_at": "2026-11-08T14:12:30.866982+00:00",
+      "field": "Close/Last",
+      "session": "US regular session",
+      "market_timezone": "America/New_York",
+      "source_url": "https://api.nasdaq.com/api/quote/MSFT/historical?assetclass=stocks&limit=10&fromdate=2026-11-06&todate=2026-11-07",
+      "adjustment_basis": "not specified by source",
+      "official_closing_price_certified": false,
+      "raw_path": "/demo/v02/market/msft-nasdaq-raw.json",
+      "raw_sha256": "f1347db99dd1ad6c5347016c35be2116be09759a447a7f380e238f58cf1d4395"
+    },
+    {
+      "ticker": "AMAT",
+      "close": 332.715,
+      "trade_date": "2026-11-06",
+      "retrieved_at": "2026-11-08T14:12:34.020247+00:00",
+      "field": "Close/Last",
+      "session": "US regular session",
+      "market_timezone": "America/New_York",
+      "source_url": "https://api.nasdaq.com/api/quote/AMAT/historical?assetclass=stocks&limit=10&fromdate=2026-11-06&todate=2026-11-07",
+      "adjustment_basis": "not specified by source",
+      "official_closing_price_certified": false,
+      "raw_path": "/demo/v02/market/amat-nasdaq-raw.json",
+      "raw_sha256": "bef95f18f2c235de204520dbca4ef38270ad5ba716c2db13a54c2f16bd517b6a"
+    }
+  ]
+}

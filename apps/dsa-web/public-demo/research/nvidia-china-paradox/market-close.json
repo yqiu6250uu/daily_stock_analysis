@@ -1,0 +1,14 @@
+{
+  "ticker": "NVDA",
+  "close": 186.64,
+  "currency": "USD",
+  "session": "US regular session",
+  "trade_date": "2026-11-06",
+  "market_timezone": "America/New_York",
+  "retrieved_at": "2026-11-07T10:10:35Z",
+  "field": "Close/Last",
+  "source_url": "https://api.nasdaq.com/api/quote/NVDA/historical?assetclass=stocks&limit=10&fromdate=2026-11-06&todate=2026-11-07",
+  "adjustment_basis": "not specified by source",
+  "official_closing_price_certified": false,
+  "archive_sha256": "064634c2a4ef858791bf7a0865f5c7e1ea78eb6d054a40c97ae5ee1dad9e44ef"
+}

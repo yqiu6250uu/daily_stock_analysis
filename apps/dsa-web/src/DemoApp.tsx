@@ -10,6 +10,7 @@ import RevenueCashFlowResearchPage from './pages/RevenueCashFlowResearchPage';
 import MyResearchPage from './pages/MyResearchPage';
 import ResearchQuestionsPage from './pages/ResearchQuestionsPage';
 import AboutEquityLensPage from './pages/AboutEquityLensPage';
+import NvidiaChinaParadoxPage from './pages/NvidiaChinaParadoxPage';
 import './App.css';
 
 const router = createBrowserRouter([{
@@ -17,6 +18,7 @@ const router = createBrowserRouter([{
   children: [
     { path: '/', element: <ResearchHomePage /> },
     { path: '/research', element: <CompanyResearchPage /> },
+    { path: '/research/nvidia-china-paradox', element: <NvidiaChinaParadoxPage /> },
     { path: '/research/:ticker', element: <CompanyResearchPage /> },
     { path: '/research/:ticker/questions/revenue-cash-flow', element: <RevenueCashFlowResearchPage /> },
     { path: '/my-research', element: <MyResearchPage /> },

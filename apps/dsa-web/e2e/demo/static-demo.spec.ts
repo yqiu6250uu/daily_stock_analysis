@@ -1,5 +1,9 @@
 import { expect, test } from '@playwright/test';
 
+test.beforeEach(async ({ page }) => {
+  await page.addInitScript(() => localStorage.setItem('dsa.uiLanguage', 'en'));
+});
+
 test('verified multi-company search, report, evidence and local continuity', async ({ page }) => {
   const privateCalls: string[] = [];
   page.on('request', (request) => {
@@ -52,7 +56,7 @@ test('verified multi-company search, report, evidence and local continuity', asy
 
 test('Market Tools disclosure and read-only comparison use verified periods', async ({ page }) => {
   await page.goto('/tools/compare');
-  await expect(page.getByRole('heading', { name: 'Company comparison' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Company comparison', exact: true })).toBeVisible();
   await expect(page.getByText('MICROSOFT CORP · MSFT')).toBeVisible();
   await expect(page.getByText('APPLIED MATERIALS INC /DE · AMAT')).toBeVisible();
   await expect(page.getByText('2025-07-01 → 2026-06-30')).toBeVisible();
@@ -111,6 +115,9 @@ test('unsupported inherited routes explain the public boundary', async ({ page }
 
 test('first visit exposes three real research entries, question, tools and methodology', async ({ page }) => {
   await page.goto('/');
+  await expect(page.locator('.el-home-case')).toContainText('Flagship research / 7 Nov 2026 cutoff');
+  await expect(page.locator('.el-home-case')).toContainText('global system sales, margins and collections');
+  await expect(page.locator('.el-feature-company')).toContainText('Latest filed quarter: FY2027 Q2');
   await expect(page.getByRole('heading', { name: 'Verified company research' })).toBeVisible();
   const companies = page.locator('.el-v021-company-row');
   await expect(companies).toHaveCount(3);
@@ -123,7 +130,7 @@ test('first visit exposes three real research entries, question, tools and metho
   await page.getByRole('link', { name: 'About EquityLens' }).click();
   await expect(page.getByRole('heading', { name: 'Methodology' })).toBeVisible();
   await expect(page.getByText(/30 reported facts and six derived-quarter values/)).toBeVisible();
-  await expect(page.locator('.el-v021-about-summary')).toContainText('Oct 29, 2026');
+  await expect(page.locator('.el-v021-about-summary')).toContainText('Nov 8, 2026');
 });
 
 test('comparison selection and screener sorting stay within the three verified issuers', async ({ page }) => {
@@ -139,9 +146,67 @@ test('comparison selection and screener sorting stay within the three verified i
   await expect(page.getByRole('alert')).toContainText('nonnegative');
 });
 
+test('NVIDIA flagship research shows conditional paths, evidence and final review files', async ({ page, browser }) => {
+  await page.goto('/');
+  await page.getByRole('link', { name: 'Read the research' }).click();
+  await expect(page).toHaveURL(/\/research\/nvidia-china-paradox$/);
+  await expect(page.getByRole('heading', { name: 'China has two gates. NVIDIA has a $1tn test.' })).toBeVisible();
+  await expect(page.locator('.el-nvda-scope')).toContainText('unsigned research scenarios');
+  await expect(page.locator('.el-showcase-status')).toContainText('$157.63');
+  await expect(page.locator('.el-nvda-gw-equivalent')).toContainText('33.6');
+  await expect(page.locator('.el-nvda-weight-insight')).toContainText('49.8%');
+  await expect(page.locator('.el-nvda-matrix')).toContainText('$236.58');
+  await expect(page.locator('.el-nvda-joint-stress')).toContainText('$119.45');
+  await page.getByRole('slider', { name: /Hypothetical annual net-new China sales/ }).fill('20');
+  await expect(page.locator('.el-nvda-slider-output')).toContainText('+$3.71');
+  await page.getByRole('button', { name: 'Cancel one year' }).click();
+  await expect(page.locator('.el-nvda-policy-result')).toContainText('$0.091');
+  const files = [
+    'NVIDIA_Equity_Research_Report.pdf',
+    'NVIDIA_Equity_Research_Report.docx',
+    'NVIDIA_One_Page_Stock_Pitch.pdf',
+    'NVIDIA_One_Page_Stock_Pitch.docx',
+    'NVIDIA_Three_Path_Review_Model.xlsx',
+    'Source_and_Evidence_Register.csv',
+    'Model_QA_and_Limitations.md',
+    'NVIDIA_China_Paradox_Research_Package.zip',
+    'README.md',
+  ];
+  for (const file of files) {
+    const path = `/research/nvidia-china-paradox/${file}`;
+    expect((await page.request.get(path)).status(), path).toBe(200);
+  }
+  await expect(page.locator('.el-showcase-downloads a')).toHaveCount(8);
+  await expect(page.getByRole('link', { name: 'CV · PDF' })).toBeVisible();
+
+  const mobile = await browser.newContext({ locale: 'zh-CN', viewport: { width: 390, height: 844 } });
+  const zh = await mobile.newPage();
+  await zh.goto('/research/nvidia-china-paradox');
+  await expect(zh.getByRole('heading', { name: '中国有两道门，英伟达有万亿美元考题' })).toBeVisible();
+  await expect(zh.locator('.el-nvda-gw-equivalent')).toContainText('33.6');
+  expect(await zh.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+  await mobile.close();
+});
+
+test('issuer pages distinguish the latest filed quarter from dated Nasdaq close snapshots', async ({ page }) => {
+  const expected = [
+    ['NVDA', '186.64', 'FY2027 Q2'],
+    ['MSFT', '530.61', 'FY2027 Q1'],
+    ['AMAT', '332.715', 'FY2026 Q3'],
+  ];
+  for (const [ticker, close, quarter] of expected) {
+    await page.goto(`/research/${ticker}`);
+    await expect(page.locator('.el-market-close')).toContainText(`2026-11-06 · $${close} · Close/Last`);
+    await expect(page.locator('.el-market-close')).toContainText('Not live; NOCP and adjustment basis unverified.');
+    await expect(page.locator('.el-market-close a')).toHaveAttribute('href', new RegExp(`api\\.nasdaq\\.com/api/quote/${ticker}/historical`));
+    await page.getByRole('button', { name: 'Quarterly' }).click();
+    await expect(page.locator('.el-research-periodbar')).toContainText(quarter);
+  }
+});
+
 test('public research routes retain bilingual responsive light and dark behavior', async ({ browser }) => {
   test.setTimeout(180_000);
-  const routes = ['/', '/research/NVDA', '/research/MSFT', '/research/AMAT', '/questions', '/research/NVDA/questions/revenue-cash-flow', '/tools', '/tools/compare', '/tools/screener', '/my-research', '/about'];
+  const routes = ['/', '/research/NVDA', '/research/MSFT', '/research/AMAT', '/research/nvidia-china-paradox', '/questions', '/research/NVDA/questions/revenue-cash-flow', '/tools', '/tools/compare', '/tools/screener', '/my-research', '/about'];
   for (const width of [1440, 1024, 768, 390]) for (const language of ['en', 'zh'] as const) for (const theme of ['light', 'dark'] as const) {
     const context = await browser.newContext({ viewport: { width, height: 900 }, locale: language === 'zh' ? 'zh-CN' : 'en-US' });
     await context.addInitScript(({ language, theme }) => { localStorage.setItem('dsa.uiLanguage', language); localStorage.setItem('theme', theme); }, { language, theme });

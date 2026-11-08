@@ -1,7 +1,7 @@
 import type React from 'react';
 import { useEffect, useState } from 'react';
 import { Menu, PanelLeftClose, PanelLeftOpen } from 'lucide-react';
-import { Link, Outlet } from 'react-router-dom';
+import { Link, Outlet, useLocation } from 'react-router-dom';
 import { Drawer } from '../common/Drawer';
 import { EquityLensMark } from '../brand/EquityLensMark';
 import { SidebarNav } from './SidebarNav';
@@ -22,6 +22,7 @@ export const Shell: React.FC<ShellProps> = ({ children }) => {
   const [snapshotDate, setSnapshotDate] = useState<Date | null>(null);
   const { language } = useUiLanguage();
   const copy = equitylensText[language];
+  const isFlagshipResearch = useLocation().pathname === '/research/nvidia-china-paradox';
 
   useEffect(() => {
     if (!IS_STATIC_DEMO) return;
@@ -55,10 +56,15 @@ export const Shell: React.FC<ShellProps> = ({ children }) => {
       </aside>
       <div className="el-workspace">
         {!IS_STATIC_DEMO && <div className="el-desktop-update"><DesktopUpdateIndicator /></div>}
-        {IS_STATIC_DEMO && <div className="el-demo-banner" role="note">
-          <strong>{copy.demoLabel}</strong><span className="el-demo-status">{copy.demoStatus}</span>
-          <span>{copy.demoBanner}{snapshotDate ? ` · ${copy.demoSnapshotDate} ${new Intl.DateTimeFormat(language === 'zh' ? 'zh-CN' : 'en-US', { year: 'numeric', month: 'short', day: 'numeric', timeZone: 'UTC' }).format(snapshotDate)}` : ''}</span>
-          <Link to="/about">{copy.demoAbout}</Link>
+        {IS_STATIC_DEMO && <div className={`el-demo-banner${isFlagshipResearch ? ' is-flagship' : ''}`} role="note">
+          {isFlagshipResearch ? <>
+            <span><strong>Yuqi Qiu</strong> · {language === 'zh' ? '平台 SEC 快照' : 'Platform SEC snapshots'} {snapshotDate ? snapshotDate.toISOString().slice(0, 10) : '2026-11-08'} · {language === 'zh' ? '非实时' : 'not live'}</span>
+            <Link to="/about">{copy.demoAbout}</Link>
+          </> : <>
+            <strong>{copy.demoLabel}</strong><span className="el-demo-status">{copy.demoStatus}</span>
+            <span>{copy.demoBanner}{snapshotDate ? ` · ${copy.demoSnapshotDate} ${new Intl.DateTimeFormat(language === 'zh' ? 'zh-CN' : 'en-US', { year: 'numeric', month: 'short', day: 'numeric', timeZone: 'UTC' }).format(snapshotDate)}` : ''}</span>
+            <Link to="/about">{copy.demoAbout}</Link>
+          </>}
         </div>}
         <main id="main-content" className="el-workspace-main">{children ?? <Outlet />}</main>
       </div>

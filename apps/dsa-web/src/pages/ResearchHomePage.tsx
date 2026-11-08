@@ -89,6 +89,7 @@ const ResearchHomePage: React.FC = () => {
 
   const annual = useMemo(() => data?.periods.filter((period) => period.type === 'annual') ?? [], [data]);
   const latest = annual[0];
+  const latestQuarter = data?.periods.find((period) => period.type === 'quarterly');
   const trend = useMemo(() => [...annual].reverse().filter((period) => period.values.revenue?.value != null).slice(-5).map((period) => ({
     period: periodLabel(period), value: period.values.revenue!.value / 1_000_000_000,
   })), [annual]);
@@ -136,6 +137,11 @@ const ResearchHomePage: React.FC = () => {
         </form>
       </section>
 
+      {IS_STATIC_DEMO && <section className="el-home-case" aria-labelledby="el-home-case-title">
+        <div><p className="el-eyebrow">★ {language === 'en' ? 'Flagship research / 7 Nov 2026 cutoff' : '旗舰研究 / 截止 2026-11-07'}</p><h2 id="el-home-case-title">{language === 'en' ? 'NVIDIA: the price depends on AI returns after FY2028' : '英伟达：股价取决于 FY2028 后的 AI 回报'}</h2><p>{language === 'en' ? 'China reopening faces two regulatory gates. The larger valuation test is how long global system sales, margins and collections can endure.' : '中国市场重开须过两道监管门；更大的估值考题是全球系统销售、利润率与回款能持续多久。'}</p></div>
+        <Link to="/research/nvidia-china-paradox">{language === 'en' ? 'Read the research' : '阅读研究'}<ArrowUpRight aria-hidden="true" /></Link>
+      </section>}
+
       <section className="el-feature" aria-labelledby="el-feature-title">
         <header className="el-feature-head">
           <div><p className="el-eyebrow">{copy.featuredEyebrow}</p><h2 id="el-feature-title">{copy.featuredTitle}</h2><p>{copy.featuredDescription}</p></div>
@@ -143,7 +149,7 @@ const ResearchHomePage: React.FC = () => {
         </header>
         <div className="el-feature-company">
           <div className="el-company-identity"><span className="el-company-initial">N</span><div><strong>{data?.company_name ?? 'NVIDIA'}</strong><span>NVDA · SEC EDGAR</span></div></div>
-          <div className="el-company-context">{latest ? <><strong>{periodLabel(latest)}</strong><span>{latest.period_start} — {latest.period_end} · {latest.filing_form}</span></> : <span>{loading ? copy.dataLoading : copy.period}</span>}</div>
+          <div className="el-company-context">{latest ? <><strong>{language === 'zh' ? '年度实际' : 'Annual actual'} · {periodLabel(latest)}</strong><span>{latest.period_start} — {latest.period_end} · {latest.filing_form}</span>{latestQuarter && <span>{language === 'zh' ? '最新季度财报' : 'Latest filed quarter'}: FY{latestQuarter.fiscal_year} Q{latestQuarter.fiscal_quarter} · {latestQuarter.period_end} · {latestQuarter.filing_form}</span>}</> : <span>{loading ? copy.dataLoading : copy.period}</span>}</div>
         </div>
         <div className="el-feature-tabs" role="tablist" aria-label={copy.explore}>
           {(['fundamentals', 'trends', 'evidence'] as const).map((key, index, keys) => <button key={key} type="button" role="tab" aria-selected={tab === key}
@@ -198,9 +204,10 @@ const ResearchHomePage: React.FC = () => {
             {VERIFIED_DEMO_TICKERS.map((ticker) => {
               const company = universe.find((item) => item.ticker === ticker);
               const period = company?.periods.find((item) => item.type === 'annual');
+              const quarter = company?.periods.find((item) => item.type === 'quarterly');
               return <Link key={ticker} to={`/research/${ticker}`} className="el-v021-company-row">
                 <span className="el-v021-company-symbol">{ticker.slice(0, 1)}</span>
-                <span className="el-v021-company-name"><strong>{company?.company_name ?? (ticker === 'NVDA' ? 'NVIDIA' : ticker === 'MSFT' ? 'Microsoft' : 'Applied Materials')}</strong><small>{ticker} · {period ? `FY${period.fiscal_year} · ${period.period_end}` : v02.loading}</small></span>
+                <span className="el-v021-company-name"><strong>{company?.company_name ?? (ticker === 'NVDA' ? 'NVIDIA' : ticker === 'MSFT' ? 'Microsoft' : 'Applied Materials')}</strong><small>{ticker} · {language === 'zh' ? '年度实际' : 'Annual actual'} {period ? `FY${period.fiscal_year} · ${period.period_end}` : v02.loading}</small>{quarter && <small>{language === 'zh' ? '最新披露' : 'Latest filed'} FY{quarter.fiscal_year} Q{quarter.fiscal_quarter} · {quarter.period_end}</small>}</span>
                 <span className="el-v021-company-metric"><small>{v02.revenue} · {v02.sourceConfirmed}</small><strong>{period?.values.revenue ? `${compactValue(period.values.revenue, language)} ${copy.trendUnit}` : '—'}</strong></span>
                 <span className="el-v021-company-metric"><small>{v02.cash} · {v02.sourceConfirmed}</small><strong>{period?.values.operating_cash_flow ? `${compactValue(period.values.operating_cash_flow, language)} ${copy.trendUnit}` : '—'}</strong></span>
                 <ArrowUpRight aria-hidden="true" />

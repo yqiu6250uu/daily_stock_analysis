@@ -90,6 +90,10 @@
 .el-demo-banner strong { color: var(--el-navy); font-size: 10px; letter-spacing: .12em; }
 .el-demo-banner .el-demo-status { color: var(--el-ink); font-weight: 700; }
 .el-demo-banner a { margin-left: auto; color: var(--el-action); font-weight: 700; text-underline-offset: 3px; }
+.el-demo-banner.is-flagship { flex-wrap: nowrap; gap: 10px; padding-top: 7px; padding-bottom: 7px; font-size: 10px; }
+.el-demo-banner.is-flagship span { min-width: 0; }
+.el-demo-banner.is-flagship strong { letter-spacing: 0; }
+.el-demo-banner.is-flagship a { flex: 0 0 auto; }
 .el-demo-unavailable { width: min(100%, 850px); margin: 0 auto; padding: 68px clamp(24px, 4vw, 58px); }
 .el-demo-unavailable h1 { margin: 12px 0; color: var(--el-ink); font: 600 clamp(26px, 3vw, 36px)/1.2 Georgia, 'Times New Roman', serif; }
 .el-demo-unavailable p:not(.el-eyebrow) { max-width: 620px; color: var(--el-muted); line-height: 1.65; }
@@ -215,6 +219,12 @@
 .el-research-company h2 span { margin-left: 6px; color: var(--el-muted); font: 600 13px/1.2 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .03em; white-space: nowrap; }
 .el-research-company-main > p:last-child { margin-top: 7px; color: var(--el-muted); font-size: 11px; }
 .el-research-company-meta { display: flex; flex-direction: column; align-items: flex-end; gap: 10px; flex: 0 0 auto; color: var(--el-muted); font-size: 10px; }
+.el-market-close { display: flex; flex-direction: column; align-items: flex-end; gap: 3px; max-width: 320px; padding: 10px 12px; border: 1px solid var(--el-line); border-radius: 7px; background: var(--el-paper); text-align: right; }
+.el-market-close > span { color: var(--el-muted); font-size: 10px; }
+.el-market-close strong { color: var(--el-ink); font-size: 12px; font-variant-numeric: tabular-nums; }
+.el-market-close small { color: var(--el-muted); font-size: 10px; line-height: 1.4; }
+.el-market-close a, .el-market-close button { color: var(--el-action); font-size: 10px; font-weight: 700; }
+.el-market-close button { padding: 0; border: 0; background: transparent; cursor: pointer; }
 .el-research-periodbar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 22px; padding: 16px 0 0; }
 .el-research-period-switch, .el-research-chart-toolbar { display: inline-flex; gap: 3px; padding: 3px; border: 1px solid var(--el-line); border-radius: 8px; background: var(--el-paper); }
 .el-research-period-switch button, .el-research-chart-toolbar button { padding: 6px 12px; border: 0; border-radius: 5px; background: transparent; color: var(--el-muted); font-size: 11px; font-weight: 650; cursor: pointer; }
@@ -337,6 +347,7 @@
   .el-research-search { width: 100%; max-width: 420px; flex: none; }
   .el-research-company { align-items: start; flex-direction: column; }
   .el-research-company-meta { align-items: start; flex-direction: row; flex-wrap: wrap; }
+  .el-market-close { align-items: flex-start; text-align: left; }
   .el-research-section-head { align-items: start; flex-direction: column; gap: 6px; }
   .el-research-section-head > p { max-width: none; text-align: left; }
   .el-research-metrics { grid-template-columns: 1fr; gap: 10px; }

@@ -5,6 +5,7 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { secFinancialsApi } from '../api/secFinancials';
 import { IS_STATIC_DEMO, isVerifiedDemoTicker } from '../demo/config';
+import MarketCloseBadge from '../demo/MarketCloseBadge';
 import { researchV02Text } from '../i18n/researchV02Text';
 import { saveResearch } from '../demo/researchStore';
 import { Link } from 'react-router-dom';
@@ -199,7 +200,7 @@ const CompanyResearchContent: React.FC<{ ticker: string }> = ({ ticker }) => {
       <section className="el-research-company" aria-label={t('research.companyContext')}>
         <div className="el-research-company-main"><p className="el-eyebrow">{t('research.companyContext')}</p><h2>{data.company_name} <span>{data.ticker}</span></h2>
           <p>CIK {String(data.cik).padStart(10, '0')} <span aria-hidden="true">·</span> {data.data_quality.source}</p></div>
-        <div className="el-research-company-meta"><span>{t('research.retrieved')} {readableTime(data.retrieved_at, language)}</span>{!IS_STATIC_DEMO && <Button type="button" size="sm" variant="secondary" onClick={() => void load()} disabled={loading}><RefreshCw aria-hidden="true" />{t('research.refresh')}</Button>}</div>
+        <div className="el-research-company-meta"><span>{t('research.retrieved')} {readableTime(data.retrieved_at, language)}</span><MarketCloseBadge ticker={ticker} language={language} />{!IS_STATIC_DEMO && <Button type="button" size="sm" variant="secondary" onClick={() => void load()} disabled={loading}><RefreshCw aria-hidden="true" />{t('research.refresh')}</Button>}</div>
       </section>
 
       <div className="el-research-periodbar">
