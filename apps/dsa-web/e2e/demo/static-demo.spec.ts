@@ -203,7 +203,12 @@ test('NVIDIA flagship research shows conditional paths, evidence and final revie
   expect(résuméInfo).toMatch(/^Title:\s+Yuqi Qiu/m);
   expect(résuméInfo).not.toMatch(/HKMA/i);
   const oldRésumé = await page.request.get('/research/nvidia-china-paradox/Yuqi_Qiu_CV_Review.pdf');
-  expect(oldRésumé.headers()['content-type'] ?? '').not.toContain('application/pdf');
+  if ((oldRésumé.headers()['content-type'] ?? '').includes('application/pdf')) {
+    expect(oldRésumé.url()).toContain(résuméPath);
+    expect((await oldRésumé.body()).equals(await résumé.body())).toBe(true);
+  } else {
+    expect(oldRésumé.headers()['content-type']).toContain('text/html'); // Vite preview does not apply Pages redirects.
+  }
   await page.getByRole('link', { name: 'Read the Chinese executive summary' }).click();
   await expect(page).toHaveURL(/\/research\/nvidia-china-paradox\/zh-summary$/);
   await expect(page.getByRole('heading', { name: '英伟达（NVDA）：中国是期权，估值押注增长持续期' })).toBeVisible();
