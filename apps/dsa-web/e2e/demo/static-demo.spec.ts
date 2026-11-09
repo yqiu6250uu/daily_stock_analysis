@@ -1,3 +1,4 @@
+import { execFileSync } from 'node:child_process';
 import { expect, test } from '@playwright/test';
 
 test.beforeEach(async ({ page }) => {
@@ -192,7 +193,17 @@ test('NVIDIA flagship research shows conditional paths, evidence and final revie
     expect((await page.request.get(path)).status(), path).toBe(200);
   }
   await expect(page.locator('.el-showcase-downloads a')).toHaveCount(9);
-  await expect(page.getByRole('link', { name: 'CV · PDF' })).toBeVisible();
+  const résuméPath = '/research/nvidia-china-paradox/Yuqi_Qiu_Equity_Research_Resume.pdf';
+  await expect(page.getByRole('link', { name: 'Equity research résumé · PDF' })).toHaveAttribute('href', résuméPath);
+  const résumé = await page.request.get(résuméPath);
+  expect(résumé.status()).toBe(200);
+  expect(résumé.headers()['content-type']).toContain('application/pdf');
+  const résuméInfo = execFileSync('pdfinfo', ['-'], { input: await résumé.body(), encoding: 'utf8' });
+  expect(résuméInfo).toMatch(/^Pages:\s+1$/m);
+  expect(résuméInfo).toMatch(/^Title:\s+Yuqi Qiu/m);
+  expect(résuméInfo).not.toMatch(/HKMA/i);
+  const oldRésumé = await page.request.get('/research/nvidia-china-paradox/Yuqi_Qiu_CV_Review.pdf');
+  expect(oldRésumé.headers()['content-type'] ?? '').not.toContain('application/pdf');
   await page.getByRole('link', { name: 'Read the Chinese executive summary' }).click();
   await expect(page).toHaveURL(/\/research\/nvidia-china-paradox\/zh-summary$/);
   await expect(page.getByRole('heading', { name: '英伟达（NVDA）：中国是期权，估值押注增长持续期' })).toBeVisible();
@@ -202,6 +213,7 @@ test('NVIDIA flagship research shows conditional paths, evidence and final revie
   const zh = await mobile.newPage();
   await zh.goto('/research/nvidia-china-paradox');
   await expect(zh.getByRole('heading', { name: '英伟达：中国是期权，估值取决于增长持续期。' })).toBeVisible();
+  await expect(zh.getByRole('link', { name: '股票研究简历 · PDF' })).toHaveAttribute('href', résuméPath);
   await expect(zh.locator('.el-nvda-gw-equivalent')).toContainText('33.6');
   expect(await zh.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
   await mobile.close();

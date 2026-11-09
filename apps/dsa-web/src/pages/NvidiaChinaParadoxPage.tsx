@@ -19,7 +19,7 @@ const assets = {
   chineseSummary: `${root}Chinese_Research_Summary.md`,
   package: `${root}NVIDIA_China_Paradox_Research_Package.zip`,
   readme: `${root}README.md`,
-  cv: `${root}Yuqi_Qiu_CV_Review.pdf`,
+  cv: `${root}Yuqi_Qiu_Equity_Research_Resume.pdf`,
 };
 const src = {
   tenK: 'https://www.sec.gov/Archives/edgar/data/1045810/000104581026000021/nvda-20260125.htm',
@@ -209,6 +209,6 @@ export default function NvidiaChinaParadoxPage() {
       <details className="el-nvda-history"><summary>{zh ? '展开 FY2024–FY2026 历史财务' : 'Show FY2024–FY2026 filed history'}</summary><table><thead><tr><th>{zh ? 'NVIDIA 财年' : 'NVIDIA fiscal year'}</th><th>{zh ? '收入，十亿美元' : 'Revenue, USD bn'}</th><th>{zh ? '经营现金流，十亿美元' : 'CFO, USD bn'}</th></tr></thead><tbody><tr><td>FY2024 Actual</td><td>60.922</td><td>28.090</td></tr><tr><td>FY2025 Actual</td><td>130.497</td><td>64.089</td></tr><tr><td>FY2026 Actual</td><td>215.938</td><td>102.718</td></tr></tbody></table><p><SourceLink href={src.tenK}>NVIDIA FY2026 Form 10-K</SourceLink></p></details>
     </section>
 
-    <footer className="el-showcase-footer el-nvda-author"><div><strong>Yuqi Qiu</strong><span>{zh ? 'LSE 政治经济学（后发发展）理学硕士在读，预计 2026-12 毕业 · EquityLens 独立研究项目' : 'LSE MSc Political Economy of Late Development candidate, expected 2026-12 · Independent EquityLens research project'}</span><p>{zh ? '作者聚焦政策、公司现金流与估值之间可核验的传导路径。本研究与 NVIDIA 或中国相关企业没有委托关系。' : 'The author studies the verifiable path from policy to company cash flow and valuation. This independent work was not commissioned by NVIDIA or the Chinese firms discussed.'}</p></div><nav aria-label={zh ? '作者链接' : 'Author links'}><a href="https://www.linkedin.com/in/yuqiqiu0625" target="_blank" rel="noreferrer">LinkedIn</a><a href="https://github.com/yqiu6250uu" target="_blank" rel="noreferrer">GitHub</a><a href={assets.cv} target="_blank" rel="noreferrer">CV · PDF</a></nav></footer>
+    <footer className="el-showcase-footer el-nvda-author"><div><strong>Yuqi Qiu</strong><span>{zh ? 'LSE 政治经济学（后发发展）理学硕士在读，预计 2026-12 毕业 · EquityLens 独立研究项目' : 'LSE MSc Political Economy of Late Development candidate, expected 2026-12 · Independent EquityLens research project'}</span><p>{zh ? '作者聚焦政策、公司现金流与估值之间可核验的传导路径。本研究与 NVIDIA 或中国相关企业没有委托关系。' : 'The author studies the verifiable path from policy to company cash flow and valuation. This independent work was not commissioned by NVIDIA or the Chinese firms discussed.'}</p></div><nav aria-label={zh ? '作者链接' : 'Author links'}><a href="https://www.linkedin.com/in/yuqiqiu0625" target="_blank" rel="noreferrer">LinkedIn</a><a href="https://github.com/yqiu6250uu" target="_blank" rel="noreferrer">GitHub</a><a href={assets.cv} target="_blank" rel="noreferrer">{zh ? '股票研究简历 · PDF' : 'Equity research résumé · PDF'}</a></nav></footer>
   </main>;
 }
