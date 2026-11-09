@@ -22,7 +22,7 @@ export const Shell: React.FC<ShellProps> = ({ children }) => {
   const [snapshotDate, setSnapshotDate] = useState<Date | null>(null);
   const { language } = useUiLanguage();
   const copy = equitylensText[language];
-  const isFlagshipResearch = useLocation().pathname === '/research/nvidia-china-paradox';
+  const isFlagshipResearch = useLocation().pathname.startsWith('/research/nvidia-china-paradox');
 
   useEffect(() => {
     if (!IS_STATIC_DEMO) return;

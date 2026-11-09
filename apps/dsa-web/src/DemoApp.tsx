@@ -11,6 +11,7 @@ import MyResearchPage from './pages/MyResearchPage';
 import ResearchQuestionsPage from './pages/ResearchQuestionsPage';
 import AboutEquityLensPage from './pages/AboutEquityLensPage';
 import NvidiaChinaParadoxPage from './pages/NvidiaChinaParadoxPage';
+import NvidiaChineseSummaryPage from './pages/NvidiaChineseSummaryPage';
 import './App.css';
 
 const router = createBrowserRouter([{
@@ -19,6 +20,7 @@ const router = createBrowserRouter([{
     { path: '/', element: <ResearchHomePage /> },
     { path: '/research', element: <CompanyResearchPage /> },
     { path: '/research/nvidia-china-paradox', element: <NvidiaChinaParadoxPage /> },
+    { path: '/research/nvidia-china-paradox/zh-summary', element: <NvidiaChineseSummaryPage /> },
     { path: '/research/:ticker', element: <CompanyResearchPage /> },
     { path: '/research/:ticker/questions/revenue-cash-flow', element: <RevenueCashFlowResearchPage /> },
     { path: '/my-research', element: <MyResearchPage /> },

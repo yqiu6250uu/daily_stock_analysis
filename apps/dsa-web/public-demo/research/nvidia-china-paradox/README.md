@@ -8,5 +8,7 @@ Historical information cutoff: 2026-11-07 23:59 Asia/Shanghai. Market comparison
 - `NVIDIA_Three_Path_Review_Model.xlsx` — switchable, source-audited analyst review model with a 3×3 sensitivity. The working DCF paths are not issued targets or ratings. Native Microsoft Excel full recalculation and capital allocation sign-off remain open.
 - `Source_and_Evidence_Register.csv` — primary-source and model-source index.
 - `Model_QA_and_Limitations.md` — research judgment, checks and remaining limitations.
+- `WACC_Terminal_Growth_Sensitivity.csv` and `WACC_Terminal_Growth_QA.json` — independent nine-cell Central DCF sensitivity and its calculation record. This grid reproduces the Central base case, but native Excel recalculation remains open.
+- `Chinese_Research_Summary.md` — source-linked Chinese executive summary of the thesis, China access, valuation conditions and falsifiers.
 
 The report takes a cautious author stance at the historical reference price. It does not issue a formal BUY/HOLD/SELL rating or 12-month target. Forecasts and hypothetical sensitivity outputs are labeled as analyst estimates. Later data must be displayed separately from this frozen study.

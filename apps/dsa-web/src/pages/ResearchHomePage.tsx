@@ -138,8 +138,8 @@ const ResearchHomePage: React.FC = () => {
       </section>
 
       {IS_STATIC_DEMO && <section className="el-home-case" aria-labelledby="el-home-case-title">
-        <div><p className="el-eyebrow">★ {language === 'en' ? 'Flagship research / 7 Nov 2026 cutoff' : '旗舰研究 / 截止 2026-11-07'}</p><h2 id="el-home-case-title">{language === 'en' ? 'NVIDIA: the price depends on AI returns after FY2028' : '英伟达：股价取决于 FY2028 后的 AI 回报'}</h2><p>{language === 'en' ? 'China reopening faces two regulatory gates. The larger valuation test is how long global system sales, margins and collections can endure.' : '中国市场重开须过两道监管门；更大的估值考题是全球系统销售、利润率与回款能持续多久。'}</p></div>
-        <Link to="/research/nvidia-china-paradox">{language === 'en' ? 'Read the research' : '阅读研究'}<ArrowUpRight aria-hidden="true" /></Link>
+        <div><p className="el-eyebrow">★ {language === 'en' ? 'Flagship research / 7 Nov 2026 cutoff' : '旗舰研究 / 截止 2026-11-07'}</p><h2 id="el-home-case-title">{language === 'en' ? 'China is the option; duration is the valuation.' : '中国是期权，估值取决于增长持续期。'}</h2><p>{language === 'en' ? 'China reopening faces two regulatory gates. The larger test is how long global NVIDIA system sales, margins and collections endure after FY2028.' : '中国市场重开须过两道监管门；更大的考题是 FY2028 后全球系统销售、利润率与回款能持续多久。'}</p></div>
+        <div className="el-home-case-actions"><Link to="/research/nvidia-china-paradox">{language === 'en' ? 'Read the research' : '阅读研究'}<ArrowUpRight aria-hidden="true" /></Link><Link className="el-home-case-secondary" to="/research/nvidia-china-paradox/zh-summary">中文摘要</Link></div>
       </section>}
 
       <section className="el-feature" aria-labelledby="el-feature-title">
