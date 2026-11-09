@@ -115,8 +115,13 @@ test('unsupported inherited routes explain the public boundary', async ({ page }
 
 test('first visit exposes three real research entries, question, tools and methodology', async ({ page }) => {
   await page.goto('/');
-  await expect(page.locator('.el-home-case')).toContainText('Flagship research / 7 Nov 2026 cutoff');
+  await expect(page.locator('.el-home-case')).toContainText('NVIDIA / NVDA · Flagship research · 7 Nov 2026 cutoff');
   await expect(page.locator('.el-home-case')).toContainText('global NVIDIA system sales, margins and collections');
+  await expect(page.getByRole('heading', { name: 'NVIDIA: China is the option; duration is the valuation.' })).toBeVisible();
+  await expect(page.locator('.el-home-case-actions a')).toHaveCount(3);
+  await page.getByRole('link', { name: 'Explore SEC financials' }).click();
+  await expect(page.getByRole('heading', { name: 'The filed financial evidence' })).toBeVisible();
+  await expect(page.getByRole('tab', { name: 'Evidence' })).toBeVisible();
   await expect(page.locator('.el-feature-company')).toContainText('Latest filed quarter: FY2027 Q2');
   await expect(page.getByRole('heading', { name: 'Verified company research' })).toBeVisible();
   const companies = page.locator('.el-v021-company-row');
@@ -148,9 +153,10 @@ test('comparison selection and screener sorting stay within the three verified i
 
 test('NVIDIA flagship research shows conditional paths, evidence and final review files', async ({ page, browser }) => {
   await page.goto('/');
-  await page.getByRole('link', { name: 'Read the research' }).click();
+  await page.getByRole('link', { name: 'Read investment research' }).click();
   await expect(page).toHaveURL(/\/research\/nvidia-china-paradox$/);
-  await expect(page.getByRole('heading', { name: 'China is the option; duration is the valuation.' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'NVIDIA: China is the option; duration is the valuation.' })).toBeVisible();
+  await expect(page.locator('.el-nvda-summary-teaser')).toContainText('The judgment, counterevidence and next earnings test');
   await expect(page.locator('.el-nvda-scope')).toContainText('unsigned research scenarios');
   await expect(page.locator('.el-showcase-status')).toContainText('$157.63');
   await expect(page.locator('.el-nvda-gw-equivalent')).toContainText('33.6');
@@ -189,13 +195,13 @@ test('NVIDIA flagship research shows conditional paths, evidence and final revie
   await expect(page.getByRole('link', { name: 'CV · PDF' })).toBeVisible();
   await page.getByRole('link', { name: 'Read the Chinese executive summary' }).click();
   await expect(page).toHaveURL(/\/research\/nvidia-china-paradox\/zh-summary$/);
-  await expect(page.getByRole('heading', { name: '英伟达：中国是期权，估值取决于增长持续期' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: '英伟达（NVDA）：中国是期权，估值押注增长持续期' })).toBeVisible();
   await expect(page.getByRole('link', { name: '下载完整英文报告' })).toBeVisible();
 
   const mobile = await browser.newContext({ locale: 'zh-CN', viewport: { width: 390, height: 844 } });
   const zh = await mobile.newPage();
   await zh.goto('/research/nvidia-china-paradox');
-  await expect(zh.getByRole('heading', { name: '中国是期权，估值取决于增长持续期。' })).toBeVisible();
+  await expect(zh.getByRole('heading', { name: '英伟达：中国是期权，估值取决于增长持续期。' })).toBeVisible();
   await expect(zh.locator('.el-nvda-gw-equivalent')).toContainText('33.6');
   expect(await zh.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
   await mobile.close();

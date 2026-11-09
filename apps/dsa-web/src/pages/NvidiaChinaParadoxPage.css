@@ -88,15 +88,20 @@
 .el-showcase-footer { padding-top: 20px; border-top: 1px solid var(--el-line); color: var(--el-muted); font-size: 10px; line-height: 1.6; }
 .el-showcase-footer span { display: block; }
 .el-showcase-footer span + span { margin-top: 6px; }
-.el-home-case { display: flex; justify-content: space-between; align-items: center; gap: 24px; margin-top: 28px; padding: 25px 29px; border: 1px solid var(--el-line); border-radius: 10px; background: var(--el-paper); }
+.el-nvda-home-hub { margin-top: 28px; border-radius: 11px; box-shadow: 0 12px 36px rgba(22,50,75,.035); }
+.el-home-case { display: flex; justify-content: space-between; align-items: center; gap: 24px; padding: 25px 29px; border: 1px solid var(--el-line); border-bottom: 0; border-radius: 10px 10px 0 0; background: var(--el-accent); }
+.el-home-case-main { min-width: 0; }
 .el-home-case h2 { margin: 6px 0 6px; color: var(--el-ink); font: 600 24px/1.2 Georgia, 'Times New Roman', serif; }
-.el-home-case p:last-child { max-width: 580px; margin: 0; color: var(--el-muted); font-size: 12px; line-height: 1.6; }
+.el-home-case p:last-child { max-width: 650px; margin: 0; color: var(--el-muted); font-size: 12px; line-height: 1.6; }
 .el-home-case a { display: inline-flex; align-items: center; gap: 8px; padding: 11px 15px; border-radius: 7px; background: #16324b; color: #fff; font-size: 12px; font-weight: 700; white-space: nowrap; text-decoration: none; }
 .el-home-case a svg { width: 14px; height: 14px; }
-.el-home-case-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; flex: 0 0 auto; }
+.el-home-case-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; flex: 0 0 230px; }
 .el-home-case-actions .el-home-case-secondary { background: var(--el-accent); color: var(--el-action); border: 1px solid var(--el-line); }
+.el-home-case-actions .el-home-case-data { padding-left: 0; background: transparent; color: var(--el-action); }
+.el-nvda-home-hub .el-feature { border-radius: 0 0 11px 11px; }
 @media (max-width: 800px) { .el-showcase-meta, .el-showcase-bridge { grid-template-columns: 1fr 1fr; } .el-showcase-event-grid { grid-template-columns: 1fr; } .el-showcase-end { grid-template-columns: 1fr; gap: 22px; } }
-@media (max-width: 620px) { .el-showcase { padding: 23px 19px 60px; } .el-showcase-hero { padding-top: 31px; } .el-showcase-meta, .el-showcase-bridge, .el-showcase-numbers, .el-showcase-mechanisms, .el-showcase-downloads { grid-template-columns: 1fr; } .el-showcase-numbers article { min-height: 0; } .el-home-case { align-items: flex-start; flex-direction: column; padding: 20px; } }
+@media (max-width: 800px) { .el-home-case { align-items: flex-start; flex-direction: column; } .el-home-case-actions { flex: 0 0 auto; } }
+@media (max-width: 620px) { .el-showcase { padding: 23px 19px 60px; } .el-showcase-hero { padding-top: 31px; } .el-showcase-meta, .el-showcase-bridge, .el-showcase-numbers, .el-showcase-mechanisms, .el-showcase-downloads { grid-template-columns: 1fr; } .el-showcase-numbers article { min-height: 0; } .el-home-case { padding: 20px; } }
 @media (prefers-reduced-motion: reduce) { .el-showcase-downloads a, .el-home-case a { transition: none; } }
 
 /* NVIDIA author-review page: decision first, dated evidence and conditional paths. */
@@ -104,8 +109,15 @@
 .el-nvda-research .el-showcase-hero h1 { font-size: clamp(36px, 4.6vw, 61px); }
 .el-nvda-research .el-showcase-deck { max-width: 940px; color: var(--el-ink); }
 .el-nvda-scope { margin: 18px 0 0; color: var(--el-muted); font-size: 11px; line-height: 1.6; }
-.el-nvda-hero-links { display: flex; flex-wrap: wrap; gap: 8px 17px; margin-top: 12px; }
+.el-nvda-hero-links { display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: center; margin-top: 16px; }
 .el-nvda-hero-links a { color: var(--el-action); font-size: 11px; font-weight: 750; text-underline-offset: 3px; }
+.el-nvda-hero-links .el-nvda-summary-teaser { display: inline-flex; align-items: center; gap: 24px; max-width: 100%; padding: 11px 14px; border: 1px solid var(--el-line); border-left: 3px solid var(--el-action); border-radius: 7px; background: var(--el-accent); text-decoration: none; }
+.el-nvda-summary-teaser span { display: grid; gap: 2px; }
+.el-nvda-summary-teaser strong { color: var(--el-navy); font-size: 12px; }
+.el-nvda-summary-teaser small { color: var(--el-muted); font-size: 10px; font-weight: 500; line-height: 1.4; }
+.el-nvda-hero-links .el-nvda-summary-teaser svg { flex: 0 0 15px; width: 15px; height: 15px; }
+.el-nvda-report-link { display: inline-flex; align-items: center; gap: 5px; }
+.el-nvda-report-link svg { width: 13px; height: 13px; }
 .el-nvda-first-screen { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(280px, 1fr); gap: 20px; align-items: stretch; margin-top: 28px; }
 .el-nvda-path-panel, .el-nvda-reverse-panel { min-width: 0; padding: 20px; border: 1px solid var(--el-line); border-radius: 10px; background: var(--el-paper); }
 .el-nvda-panel-heading span { color: var(--el-action); font-size: 10px; font-weight: 750; text-transform: uppercase; letter-spacing: .08em; }

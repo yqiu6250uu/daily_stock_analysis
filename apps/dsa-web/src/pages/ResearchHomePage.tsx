@@ -137,14 +137,15 @@ const ResearchHomePage: React.FC = () => {
         </form>
       </section>
 
+      <div className={IS_STATIC_DEMO ? 'el-nvda-home-hub' : undefined}>
       {IS_STATIC_DEMO && <section className="el-home-case" aria-labelledby="el-home-case-title">
-        <div><p className="el-eyebrow">★ {language === 'en' ? 'Flagship research / 7 Nov 2026 cutoff' : '旗舰研究 / 截止 2026-11-07'}</p><h2 id="el-home-case-title">{language === 'en' ? 'China is the option; duration is the valuation.' : '中国是期权，估值取决于增长持续期。'}</h2><p>{language === 'en' ? 'China reopening faces two regulatory gates. The larger test is how long global NVIDIA system sales, margins and collections endure after FY2028.' : '中国市场重开须过两道监管门；更大的考题是 FY2028 后全球系统销售、利润率与回款能持续多久。'}</p></div>
-        <div className="el-home-case-actions"><Link to="/research/nvidia-china-paradox">{language === 'en' ? 'Read the research' : '阅读研究'}<ArrowUpRight aria-hidden="true" /></Link><Link className="el-home-case-secondary" to="/research/nvidia-china-paradox/zh-summary">中文摘要</Link></div>
+        <div className="el-home-case-main"><p className="el-eyebrow">★ {language === 'en' ? 'NVIDIA / NVDA · Flagship research · 7 Nov 2026 cutoff' : '英伟达 / NVDA · 旗舰研究 · 截止 2026-11-07'}</p><h2 id="el-home-case-title">{language === 'en' ? 'NVIDIA: China is the option; duration is the valuation.' : '英伟达：中国是期权，估值取决于增长持续期。'}</h2><p>{language === 'en' ? 'China reopening faces two regulatory gates. The larger test is how long global NVIDIA system sales, margins and collections endure after FY2028.' : '中国市场重开须过两道监管门；更大的考题是 FY2028 后全球系统销售、利润率与回款能持续多久。'}</p></div>
+        <nav className="el-home-case-actions" aria-label={language === 'en' ? 'NVIDIA coverage' : '英伟达研究入口'}><Link to="/research/nvidia-china-paradox">{language === 'en' ? 'Read investment research' : '阅读投资研究'}<ArrowUpRight aria-hidden="true" /></Link><Link className="el-home-case-secondary" to="/research/nvidia-china-paradox/zh-summary">中文摘要<ArrowUpRight aria-hidden="true" /></Link><a className="el-home-case-data" href="#el-feature-title">{language === 'en' ? 'Explore SEC financials' : '查看 SEC 财务数据'}<ArrowRight aria-hidden="true" /></a></nav>
       </section>}
 
       <section className="el-feature" aria-labelledby="el-feature-title">
         <header className="el-feature-head">
-          <div><p className="el-eyebrow">{copy.featuredEyebrow}</p><h2 id="el-feature-title">{copy.featuredTitle}</h2><p>{copy.featuredDescription}</p></div>
+          <div><p className="el-eyebrow">{IS_STATIC_DEMO ? (language === 'en' ? 'NVIDIA / NVDA · SEC EDGAR filed data' : '英伟达 / NVDA · SEC EDGAR 已披露数据') : copy.featuredEyebrow}</p><h2 id="el-feature-title">{IS_STATIC_DEMO ? (language === 'en' ? 'The filed financial evidence' : '已披露的财务证据') : copy.featuredTitle}</h2><p>{copy.featuredDescription}</p></div>
           <Link to="/research/NVDA" className="el-feature-link">{copy.featuredAction}<ArrowUpRight aria-hidden="true" /></Link>
         </header>
         <div className="el-feature-company">
@@ -196,6 +197,7 @@ const ResearchHomePage: React.FC = () => {
         </div>
         <footer className="el-feature-foot"><span>{data ? `${copy.retrieved} ${data.retrieved_at}` : copy.dataLoading}</span><span className="el-feature-actions">{latest && <Link to="/research/NVDA#cash-flow">{copy.compareCashFlow}<ArrowRight aria-hidden="true" /></Link>}<Link to="/research/NVDA">{copy.goToCompany}<ArrowRight aria-hidden="true" /></Link></span></footer>
       </section>
+      </div>
 
       {IS_STATIC_DEMO ? <>
         <section className="el-v02-home-universe" aria-labelledby="v02-home-universe">

@@ -73,10 +73,10 @@ export default function NvidiaChinaParadoxPage() {
     <Link to="/" className="el-showcase-back"><ArrowLeft aria-hidden="true" />{zh ? '返回研究首页' : 'Research home'}</Link>
     <header className="el-showcase-hero">
       <p className="el-eyebrow">{zh ? '英伟达中国悖论 · 独立股票研究' : 'The NVIDIA China Paradox · Independent research'}</p>
-      <h1>{zh ? '中国是期权，估值取决于增长持续期。' : 'China is the option; duration is the valuation.'}</h1>
+      <h1>{zh ? '英伟达：中国是期权，估值取决于增长持续期。' : 'NVIDIA: China is the option; duration is the valuation.'}</h1>
       <p className="el-showcase-deck">{zh ? '美国许可与中国进口批准决定市场重开的上限；估值真正依赖 FY2028 之后系统销售、利润率和回款能持续多久。' : 'US licensing and Chinese import approval govern the reopening option. Valuation turns on how long system sales, margins and collections endure after FY2028.'}</p>
       <p className="el-nvda-scope">{zh ? '信息截止 2026-11-07 北京时间 · 估值参考 2026-11-06 Nasdaq Close/Last $186.64 · 仅估值 NVIDIA · 下列 DCF 为未审定研究情景，并非正式目标价或评级' : 'Cutoff 2026-11-07 Beijing · 2026-11-06 Nasdaq Close/Last $186.64 · NVIDIA only · DCF paths are unsigned research scenarios, not issued targets or ratings'}</p>
-      <div className="el-nvda-hero-links"><Link to="/research/nvidia-china-paradox/zh-summary">{zh ? '阅读独立中文摘要' : 'Read the Chinese executive summary'}</Link><a href={assets.reportPdf} download>{zh ? '下载完整英文报告 · PDF' : 'Download full English report · PDF'}</a></div>
+      <div className="el-nvda-hero-links"><Link className="el-nvda-summary-teaser" to="/research/nvidia-china-paradox/zh-summary" aria-label={zh ? '阅读独立中文摘要' : 'Read the Chinese executive summary'}><span><strong>{zh ? '中文研究摘要' : 'Chinese research summary'}</strong><small>{zh ? '独立判断、关键反证与下次财报检验' : 'The judgment, counterevidence and next earnings test'}</small></span><ArrowUpRight aria-hidden="true" /></Link><a className="el-nvda-report-link" href={assets.reportPdf} download>{zh ? '下载完整英文报告 · PDF' : 'Download full English report · PDF'}<ArrowUpRight aria-hidden="true" /></a></div>
       <div className="el-showcase-status"><strong>{zh ? '条件性审慎判断' : 'Conditional cautious stance'}</strong><span>{zh ? 'Central 当前 DCF $157.63，比 $186.64 参考价低约 15.5%；主要反证是客户供电、验收与回款若持续超预期。' : 'Central current DCF $157.63 is ~15.5% below the $186.64 reference; sustained powered delivery and collections would challenge this cautious view.'}</span></div>
       <div className="el-nvda-first-screen">
         <div className="el-nvda-path-panel">
