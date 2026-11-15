@@ -3,6 +3,7 @@ import { ArrowLeft, ArrowUpRight, Download, FileSpreadsheet, FileText } from 'lu
 import { Link } from 'react-router-dom';
 import { CartesianGrid, Line, LineChart, ReferenceDot, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { useUiLanguage } from '../contexts/UiLanguageContext';
+import NvidiaEventUpdateSection from './NvidiaEventUpdateSection';
 import './NvidiaChinaParadoxPage.css';
 
 const root = `${import.meta.env.BASE_URL}research/nvidia-china-paradox/`;
@@ -20,6 +21,9 @@ const assets = {
   package: `${root}NVIDIA_China_Paradox_Research_Package.zip`,
   readme: `${root}README.md`,
   cv: `${root}Yuqi_Qiu_Equity_Research_Resume.pdf`,
+  eventDocx: `${root}event-2026-11-14/NVIDIA_Event_Update_2026-11-14.docx`,
+  eventSensitivity: `${root}event-2026-11-14/EVENT_DCF_ONE_FACTOR_OVERLAYS.csv`,
+  eventSources: `${root}event-2026-11-14/EVENT_SOURCE_REGISTER_PUBLIC.csv`,
 };
 const src = {
   tenK: 'https://www.sec.gov/Archives/edgar/data/1045810/000104581026000021/nvda-20260125.htm',
@@ -71,7 +75,8 @@ export default function NvidiaChinaParadoxPage() {
 
   return <main className="el-showcase el-nvda-research">
     <Link to="/" className="el-showcase-back"><ArrowLeft aria-hidden="true" />{zh ? '返回研究首页' : 'Research home'}</Link>
-    <header className="el-showcase-hero">
+    <NvidiaEventUpdateSection />
+    <header className="el-showcase-hero" id="original-study">
       <p className="el-eyebrow">{zh ? '英伟达中国悖论 · 独立股票研究' : 'The NVIDIA China Paradox · Independent research'}</p>
       <h1>{zh ? '英伟达：中国是期权，估值取决于增长持续期。' : 'NVIDIA: China is the option; duration is the valuation.'}</h1>
       <p className="el-showcase-deck">{zh ? '美国许可与中国进口批准决定市场重开的上限；估值真正依赖 FY2028 之后系统销售、利润率和回款能持续多久。' : 'US licensing and Chinese import approval govern the reopening option. Valuation turns on how long system sales, margins and collections endure after FY2028.'}</p>
@@ -195,6 +200,9 @@ export default function NvidiaChinaParadoxPage() {
       <div className="el-showcase-section-head"><p className="el-eyebrow">09 / {zh ? '资料与历史' : 'Sources and history'}</p><h2 id="nvda-files">{zh ? '阅读完整论证与复核数据' : 'Read the argument and inspect the data'}</h2></div>
       <p className="el-nvda-model-caveat">{zh ? '审阅模型已用 LibreOffice 隔离重算，缓存的中心 DCF $157.63 与本页一致；微软 Excel 原生完整重算仍为 OPEN。预测、股价口径和正式结论尚待签署。' : 'The review model was recalculated in isolated LibreOffice runs; its cached Central DCF of $157.63 matches this page. Native Microsoft Excel full recalculation remains OPEN. Forecasts, price convention and formal conclusions await sign-off.'}</p>
       <div className="el-showcase-downloads">
+        <a href={assets.eventDocx} download><FileText aria-hidden="true" />{zh ? '11 月 14 日事件研究 · 英文 DOCX' : '14 Nov event note · English DOCX'}<Download aria-hidden="true" /></a>
+        <a href={assets.eventSensitivity} download><FileSpreadsheet aria-hidden="true" />{zh ? '事件单因素敏感性数据' : 'Event one-factor sensitivity data'}<Download aria-hidden="true" /></a>
+        <a href={assets.eventSources} download><FileSpreadsheet aria-hidden="true" />{zh ? '事件更新来源登记' : 'Event source addendum'}<Download aria-hidden="true" /></a>
         <a href={assets.reportPdf} download><FileText aria-hidden="true" />{zh ? '英文报告 · PDF' : 'English report · PDF'}<Download aria-hidden="true" /></a>
         <a href={assets.reportDocx} download><FileText aria-hidden="true" />{zh ? '英文报告 · 可编辑' : 'English report · editable'}<Download aria-hidden="true" /></a>
         <a href={assets.pitchPdf} download><FileText aria-hidden="true" />{zh ? '一页股票研究论点 · PDF' : 'One-page stock pitch · PDF'}<Download aria-hidden="true" /></a>

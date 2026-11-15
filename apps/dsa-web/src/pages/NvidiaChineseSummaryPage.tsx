@@ -12,6 +12,7 @@ export default function NvidiaChineseSummaryPage() {
   useEffect(() => { document.title = '英伟达研究中文摘要 · EquityLens'; }, []);
   return <main className="el-showcase el-nvda-research el-nvda-summary-page">
     <Link to="/research/nvidia-china-paradox" className="el-showcase-back"><ArrowLeft aria-hidden="true" />返回完整研究页</Link>
+    <div className="el-nvda-summary-new"><strong>11 月 14 日事件更新</strong><p>股价下跌让旧模型与市价更接近，但管理层变动也扩大了长期需求、执行和资金安排的不确定性。<Link to="/research/nvidia-china-paradox">先读最新研究分析</Link>；下方保留截至 11 月 7 日的原始中文摘要。</p></div>
     <div className="el-nvda-summary-markdown"><ReactMarkdown remarkPlugins={[remarkGfm]}>{summary}</ReactMarkdown></div>
     <div className="el-nvda-summary-downloads">
       <a href={`${files}NVIDIA_Equity_Research_Report.pdf`} download><FileText aria-hidden="true" />下载完整英文报告 <Download aria-hidden="true" /></a>

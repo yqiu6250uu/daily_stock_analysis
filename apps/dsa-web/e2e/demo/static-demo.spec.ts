@@ -157,6 +157,11 @@ test('NVIDIA flagship research shows conditional paths, evidence and final revie
   await page.getByRole('link', { name: 'Read investment research' }).click();
   await expect(page).toHaveURL(/\/research\/nvidia-china-paradox$/);
   await expect(page.getByRole('heading', { name: 'NVIDIA: China is the option; duration is the valuation.' })).toBeVisible();
+  await expect(page.locator('.el-nvda-event')).toContainText('Evidence cutoff 14 Nov 2026, 23:23 Beijing');
+  await expect(page.locator('.el-nvda-event')).toContainText('H.R. 9442 was introduced and referred to committees on 24 June');
+  await expect(page.locator('.el-nvda-event')).toContainText('$1.85/share');
+  await expect(page.locator('.el-nvda-event-table-wrap tbody tr')).toHaveCount(6);
+  await expect(page.locator('#original-study .el-nvda-scope')).toContainText('2026-11-07 Beijing');
   await expect(page.locator('.el-nvda-summary-teaser')).toContainText('The judgment, counterevidence and next earnings test');
   await expect(page.locator('.el-nvda-scope')).toContainText('unsigned research scenarios');
   await expect(page.locator('.el-showcase-status')).toContainText('$157.63');
@@ -187,12 +192,16 @@ test('NVIDIA flagship research shows conditional paths, evidence and final revie
     'WACC_Terminal_Growth_Sensitivity.csv',
     'WACC_Terminal_Growth_QA.json',
     'README.md',
+    'event-2026-11-14/NVIDIA_Event_Update_2026-11-14.docx',
+    'event-2026-11-14/EVENT_SOURCE_REGISTER_PUBLIC.csv',
+    'event-2026-11-14/EVENT_DCF_ONE_FACTOR_OVERLAYS.csv',
+    'event-2026-11-14/NASDAQ_DAILY_CLOSE_LAST_2026-11-06_TO_13.csv',
   ];
   for (const file of files) {
     const path = `/research/nvidia-china-paradox/${file}`;
     expect((await page.request.get(path)).status(), path).toBe(200);
   }
-  await expect(page.locator('.el-showcase-downloads a')).toHaveCount(9);
+  await expect(page.locator('.el-showcase-downloads a')).toHaveCount(12);
   const résuméPath = '/research/nvidia-china-paradox/Yuqi_Qiu_Equity_Research_Resume.pdf';
   await expect(page.getByRole('link', { name: 'Equity research résumé · PDF' })).toHaveAttribute('href', résuméPath);
   const résumé = await page.request.get(résuméPath);
@@ -218,6 +227,7 @@ test('NVIDIA flagship research shows conditional paths, evidence and final revie
   const zh = await mobile.newPage();
   await zh.goto('/research/nvidia-china-paradox');
   await expect(zh.getByRole('heading', { name: '英伟达：中国是期权，估值取决于增长持续期。' })).toBeVisible();
+  await expect(zh.locator('.el-nvda-event')).toContainText('中国市场仍是有条件的增量期权');
   await expect(zh.getByRole('link', { name: '股票研究简历 · PDF' })).toHaveAttribute('href', résuméPath);
   await expect(zh.locator('.el-nvda-gw-equivalent')).toContainText('33.6');
   expect(await zh.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);

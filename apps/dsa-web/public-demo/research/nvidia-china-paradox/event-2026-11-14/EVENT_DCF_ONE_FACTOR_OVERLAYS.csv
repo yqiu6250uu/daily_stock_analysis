@@ -1,0 +1,8 @@
+analyst_one_factor_test,input_change,frozen_2026_11_06_DCF_USD_per_share,delta_vs_old_central_USD_per_share,method_and_boundary
+OLD_CENTRAL,None,157.6322398942773,0.0,"Original 6 Nov analyst DCF; one-factor test only; not approved, not a new 13 Nov target. See event note and source register."
+RISK_FREE_10Y_ROW_SHIFT_ONLY,UST 10Y 4.86% to 5.15%; WACC 10.2025% to 10.4896%,152.468475967616,-5.163763926661289,"Original 6 Nov analyst DCF; one-factor test only; not approved, not a new 13 Nov target. See event note and source register."
+DC_GROWTH_MINUS_5PP_FY28_33,DC platform growth -5pp in each FY2028-FY2033,130.196724306302,-27.43551558797529,"Original 6 Nov analyst DCF; one-factor test only; not approved, not a new 13 Nov target. See event note and source register."
+GM_MINUS_2PP_FY28_36,Gross margin -2pp each FY2028-FY2036; opex ratios held,150.984976016637,-6.647263877640285,"Original 6 Nov analyst DCF; one-factor test only; not approved, not a new 13 Nov target. See event note and source register."
+RECEIVABLE_DAYS_PLUS_15_FY28_33,Receivable days +15 each FY2028-FY2033; CFO/FCFF only,156.236132936236,-1.3961069580412868,"Original 6 Nov analyst DCF; one-factor test only; not approved, not a new 13 Nov target. See event note and source register."
+WACC_PLUS_100BP,"WACC +100bp, implemented through ERP with beta and weights fixed",141.02628328696,-16.605956607317296,"Original 6 Nov analyst DCF; one-factor test only; not approved, not a new 13 Nov target. See event note and source register."
+NET_GUARANTEE_PAYOUT_10BN_FY2030,Hypothetical USD10bn net-of-recoveries payment on 2030-01-27,157.33093676963415,-0.301303124643141,"Original 6 Nov analyst DCF; one-factor test only; not approved, not a new 13 Nov target. See event note and source register."
